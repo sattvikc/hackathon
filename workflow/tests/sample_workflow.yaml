@@ -1,0 +1,37 @@
+workflow:
+  name: "SampleWorkflow"
+  tasks:
+    - name: task01
+      def: "builtin.dummy"
+      inputs:
+        x: "Hello"
+        y: "World"
+      outputs:
+        - a
+        - b
+    - name: task02
+      def: "builtin.dummy"
+      outputs:
+        - a
+      dependencies:
+        - task01
+    - name: task03
+      def: "builtin.dummy"
+      dependencies:
+        - task01
+        - task02
+      inputs:
+        x:
+          src: "properties"
+          key: "hello.world"
+        y:
+          src: "taskout"
+          key: "task01.a"
+        z:
+          src: "context"
+          key: "engine.start_time"
+        a:
+          val: "I'm some dictionary value"
+          val2:
+            src: "properties"
+            key: "resolve.me"
