@@ -2,7 +2,7 @@ import logging
 from threading import Thread
 from queue import Queue
 
-from ..engine.runner import WorkflowRunner
+from ..engine.runner import InlineRunner
 from .scheduler import Scheduler
 
 
@@ -18,7 +18,7 @@ class Server(Thread):
         self.cmd_queue.put(('submit', (workflow, properties)))
 
     def submit_exec(self, workflow, properties):
-        instance = WorkflowRunner(server=self, workflow=workflow, properties=properties)
+        instance = InlineRunner(server=self, workflow=workflow, properties=properties)
         instance.prepare()
         instance.validate()
         instance.start()

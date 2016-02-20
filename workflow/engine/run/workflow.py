@@ -48,36 +48,6 @@ class WorkflowInstance(object):
                     value = self.prepare_dict(value)
                 task.set_input(key, value)
 
-    def resolve(self):
-        pass # self.resolve_inputs()
-
-    def run(self, scheduler=None):
-        task_queue = []
-        ready_queue = []
-        success_queue = []
-        failure_queue = []
-        skipped_queue = []
-        for task in self.tasks:
-            task_queue.append(task)
-
-        while len(task_queue) > 0:
-            for task in task_queue:
-                if task.is_ready():
-                    task_queue.remove(task)
-                    ready_queue.append(task)
-
-            # Execute the ready queue
-            for task in ready_queue:
-                task.resolve_inputs()
-                task.run()
-
-            for task in ready_queue:
-                ready_queue.remove(task)
-                if task.is_successful():
-                    success_queue.append(task)
-                elif task.is_failure():
-                    failure_queue.append(task)
-
     def __str__(self):
         return 'WorkflowInstance<%s>' % self.name
 
