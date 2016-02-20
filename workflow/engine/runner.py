@@ -55,12 +55,16 @@ class InlineRunner(RunnerBase):
             # Execute the ready queue
             for task in ready_queue:
                 task.resolve_inputs()
+                self.logger.info('Task [%s] started.' % task.name)
                 task.run()
+                self.logger.info('Task [%s] completed with status [%s].' % (task.name, task.status))
 
             if len(ready_queue) == 0:
                 # Deadlock or no more executable tasks
+                self.logger.warn('No tasks are ready for execution!')
                 for task in task_queue:
                     task.status = 'SKIPPED'
+                    self.logger.warn('Task [%s] execution was skipped.' % task.name)
                     skipped_queue.append(task)
                 task_queue.clear()
                 break
