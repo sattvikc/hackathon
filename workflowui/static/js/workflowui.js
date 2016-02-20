@@ -4,7 +4,10 @@ function InputPort(options) {
   var self = this;
   self.name = options.name;
   self.value = options.value;
+  self.svg = options.svg;
+  self.viewport = options.viewport;
   self.taskNode = options.taskNode;
+  self.taskObj = options.taskObj;
   self.task = options.task;
   self.xOffset = options.xOffset;
   self.yOffset = options.yOffset;
@@ -30,17 +33,59 @@ function InputPort(options) {
 function OutputPort(options) {
   var self = this;
   self.name = options.name;
+  self.svg = options.svg;
+  self.viewport = options.viewport;
   self.taskNode = options.taskNode;
+  self.taskObj = options.taskObj;
   self.task = options.task;
   self.xOffset = options.xOffset;
   self.yOffset = options.yOffset;
+  self.index = options.index;
+  self.tempConnector = false;
+  self.tempInputPort = false;
+
+  self.handleDragDrop = function() {
+    var drag = d3.behavior.drag()
+      .on('dragstart', function() {
+        d3.event.sourceEvent.stopPropagation();
+      })
+      .on('drag', function(d, i) {
+        if(self.tempConnector) {
+          self.tempConnector.remove();
+        }
+        var mouse = {
+          'x': self.task.ui.x + d3.event.x,
+          'y': self.task.ui.y + d3.event.y
+        }
+        var response = self.viewport.findNearestInputPort(mouse);
+        if(response.found) {
+          self.tempConnector = self.viewport.renderPath(
+            self.coordinates(), response.inputPort.coordinates(), self.index);
+          self.tempInputPort = response.inputPort;
+        }
+        else {
+          self.tempConnector = self.viewport.renderPath(
+            self.coordinates(), mouse, self.index);
+          self.tempInputPort = response.inputPort;
+        }
+      })
+      .on('dragend', function() {
+        if(self.tempInputPort) {
+          self.viewport.addConnector(self, self.tempInputPort);
+        }
+        self.tempInputPort = false;
+        self.tempConnector.remove();
+      });
+    return drag;
+  }
 
   self.init = function() {
     self.taskNode.append('circle')
       .attr('class', 'task-node__outputport')
       .attr('cx', self.xOffset)
       .attr('cy', self.yOffset)
-      .attr('r', self.task.ui.port_radius);
+      .attr('r', self.task.ui.port_radius)
+      .call(self.handleDragDrop());
   }
 
   self.coordinates = function() {
@@ -119,7 +164,10 @@ function TaskNode(viewport, svg, task) {
       self.inputPorts.push(new InputPort({
         'name': name,
         'value': value,
+        'svg': self.svg,
+        'viewport': self.viewport,
         'taskNode': self.taskNode,
+        'taskObj': self,
         'task': self.task,
         'xOffset': xOffset,
         'yOffset': yOffset
@@ -139,10 +187,14 @@ function TaskNode(viewport, svg, task) {
       xOffset -= task.ui.port_spacing;
       self.outputPorts.push(new OutputPort({
         'name': name,
+        'svg': self.svg,
+        'viewport': self.viewport,
         'taskNode': self.taskNode,
+        'taskObj': self,
         'task': self.task,
         'xOffset': xOffset,
-        'yOffset': yOffset
+        'yOffset': yOffset,
+        'index': i
       }));
     }
   }
@@ -218,22 +270,28 @@ function WorkflowViewPort(identifier) {
     }
   }
 
-  self.renderConnector = function(p1, p2) {
+  self.renderPath = function(p1, p2, index) {
+    var offset = (index*10) + 15;
     var lineFunction = d3.svg.line()
       .x(function(d) { return d.x; })
       .y(function(d) { return d.y; })
       .interpolate("linear");
     var lineData = [];
     lineData.push(p1);
-    lineData.push({x: p1.x+15, y: p1.y+15});
-    lineData.push({x: (p1.x+p2.x)/2, y: p1.y+15});
-    lineData.push({x: (p1.x+p2.x)/2, y: p2.y-15});
-    lineData.push({x: p2.x-15, y: p2.y-15});
+    lineData.push({x: p1.x+offset, y: p1.y+offset});
+    lineData.push({x: (p1.x+p2.x)/2 + offset, y: p1.y+offset});
+    lineData.push({x: (p1.x+p2.x)/2 + offset, y: p2.y-offset});
+    lineData.push({x: p2.x-offset, y: p2.y-offset});
     lineData.push(p2);
 
     var path = self.svg.append('path')
       .attr('d', lineFunction(lineData))
       .attr('class', 'task-node-connector');
+    return path;
+  }
+
+  self.renderConnector = function(p1, p2, index) {
+    var path = self.renderPath(p1, p2, index);
     self.connectorPaths.push(path);
   }
 
@@ -244,12 +302,54 @@ function WorkflowViewPort(identifier) {
     self.loadConnectors();
     for(var i=0; i<self.connectors.length; i++) {
       var connector = self.connectors[i];
-      var startX = connector.outputPort.coordinates().x;
-      var startY = connector.outputPort.coordinates().y;
-      var endX = connector.inputPort.coordinates().x;
-      var endY = connector.inputPort.coordinates().y;
-      self.renderConnector({'x': startX, 'y': startY}, {'x': endX, 'y': endY});
+      var p1 = {
+        'x': connector.outputPort.coordinates().x,
+        'y': connector.outputPort.coordinates().y
+      };
+      var p2 = {
+        'x': connector.inputPort.coordinates().x,
+        'y': connector.inputPort.coordinates().y
+      };
+      self.renderConnector(p1, p2, connector.outputPort.index);
     }
+  }
+
+  self.distanceBetweenPoints = function(p1, p2) {
+    return Math.sqrt((p1.x-p2.x)*(p1.x-p2.x) + (p1.y-p2.y)*(p1.y-p2.y));
+  }
+
+  self.findNearestInputPort = function(p) {
+    var thresholdDistance = 20;
+    var nearestPort = false;
+    var minDistance = false;
+    for(var i=0; i<self.taskNodes.length; i++) {
+      var taskNode = self.taskNodes[i];
+      for(var j=0; j<taskNode.inputPorts.length; j++) {
+        var inputPort = taskNode.inputPorts[j];
+        var distance = self.distanceBetweenPoints(p, inputPort.coordinates());
+        if(minDistance && distance < minDistance) {
+          minDistance = distance;
+          nearestPort = inputPort;
+        }
+        else if(!minDistance){
+          minDistance = distance;
+          nearestPort = inputPort;
+        }
+      }
+    }
+    if(minDistance < thresholdDistance) {
+      return {'found': true, 'inputPort': nearestPort};
+    }
+    return {'found': false};
+  }
+
+  self.addConnector = function(outputPort, inputPort) {
+    inputPort.task.inputs[inputPort.name] = {
+      'src': 'taskout',
+      'key': outputPort.task.name + '.' + outputPort.name
+    }
+    inputPort.taskObj.render();
+    self.renderConnectors();
   }
 
   self.init = function() {
