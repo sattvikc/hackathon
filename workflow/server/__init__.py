@@ -13,6 +13,7 @@ class WorkflowServer(Thread):
         self.logger = logging.getLogger('workflow.Server')
         self.cmd_queue = Queue()
         self.instances = []
+        self.instances_dict = {}
         self.scheduler = Scheduler()
 
     def submit(self, workflow, properties={}):
@@ -25,6 +26,7 @@ class WorkflowServer(Thread):
         instance.validate()
         instance.start()
         self.instances.append(instance)
+        self.instances_dict.update({instance.get_run_id(): instance})
 
     def get_scheduler(self):
         return self.scheduler
