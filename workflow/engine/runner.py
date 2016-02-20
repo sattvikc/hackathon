@@ -26,7 +26,7 @@ class WorkflowRunner(Thread):
     def prepare(self):
         self.instance = Compiler.compile(self.workflow)
         self.instance.set_context(self.context)
-        self.instance.resolve()
+        self.instance.prepare_inputs()
 
     def validate(self):
         pass

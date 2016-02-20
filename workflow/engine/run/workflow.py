@@ -24,7 +24,7 @@ class WorkflowInstance(object):
             for dep in task.task.dependencies:
                 task.add_dependency(self.tasks_dict.get(dep))
 
-    def resolve_dict(self, value):
+    def prepare_dict(self, value):
         if 'src' in value:
             src = value.get('src')
             if src == 'properties':
@@ -37,19 +37,19 @@ class WorkflowInstance(object):
             result = {}
             for k, v in value.items():
                 if isinstance(v, dict):
-                    v = self.resolve_dict(v)
+                    v = self.prepare_dict(v)
                 result.update({k:v})
             return result
 
-    def resolve_inputs(self):
+    def prepare_inputs(self):
         for task in self.tasks:
             for key, value in task.inputs.items():
                 if isinstance(value, dict):
-                    value = self.resolve_dict(value)
+                    value = self.prepare_dict(value)
                 task.set_input(key, value)
 
     def resolve(self):
-        self.resolve_inputs()
+        pass # self.resolve_inputs()
 
     def run(self, scheduler=None):
         task_queue = []
@@ -68,6 +68,7 @@ class WorkflowInstance(object):
 
             # Execute the ready queue
             for task in ready_queue:
+                task.resolve_inputs()
                 task.run()
 
             for task in ready_queue:

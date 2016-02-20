@@ -1,3 +1,6 @@
+from .value import Value
+
+
 class TaskInstance(object):
     def __init__(self):
         self.name = None
@@ -11,13 +14,13 @@ class TaskInstance(object):
         self.inputs[key] = value
 
     def get_input(self, key):
-        self.inputs.get(key, None)
+        return self.inputs.get(key, None)
 
     def set_output(self, key, value):
         self.outputs[key] = value
 
     def get_output(self, key):
-        self.outputs.get(key, None)
+        return self.outputs.get(key, None)
 
     def set_name(self, name):
         self.name = name
@@ -28,14 +31,30 @@ class TaskInstance(object):
     def add_dependency(self, task):
         self.dependencies.append(task)
 
+    def resolve_dict(self, value):
+        result = {}
+        for key, val in value.items():
+            if isinstance(val, dict):
+                result.update({key: self.resolve_dict(val)})
+            elif isinstance(val, Value):
+                val = val.get_value()
+                result.update({key: val})
+            else:
+                result.update({key: val})
+        return result
+
+    def resolve_inputs(self):
+        self.inputs = self.resolve_dict(self.inputs)
+        self.task.inputs.update(self.inputs)
+
     def run(self):
         try:
             self.state = 'RUNNING'
             self.task.run()
+            self.outputs.update(self.task.outputs)
             self.state = 'SUCCESSFUL'
         except:
             self.state = 'FAILURE'
-
 
     def is_ready(self):
         ready = True

@@ -1,5 +1,6 @@
 class Value(object):
-    pass
+    def get_value(self):
+        return None
 
 
 class PropertyValue(Value):
@@ -11,3 +12,6 @@ class TaskOutputValue(Value):
     def __init__(self, task, output):
         self.task = task
         self.output = output
+
+    def get_value(self):
+        return self.task.get_output(self.output)

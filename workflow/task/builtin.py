@@ -7,5 +7,8 @@ class DummyTask(Task):
 
     def run(self):
         print('I am a dummy task. I do nothing!')
-        time.sleep(2)
         print('Wasted 2 seconds.')
+        self.set_output('dummy_out', 'Dummy output!')
+        self.set_output('a', 'AAA')
+        self.set_output('b', 'BBB')
+        self.set_output('c', 'CCC')

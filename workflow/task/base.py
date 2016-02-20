@@ -19,13 +19,13 @@ class Task(Register):
         self.inputs[key] = value
 
     def get_input(self, key):
-        self.inputs.get(key, None)
+        return self.inputs.get(key, None)
 
     def set_output(self, key, value):
         self.outputs[key] = value
 
     def get_output(self, key):
-        self.outputs.get(key, None)
+        return self.outputs.get(key, None)
 
     def run(self):
         pass  # To be implemented in concrete class
