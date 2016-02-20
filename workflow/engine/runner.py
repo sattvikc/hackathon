@@ -14,7 +14,7 @@ class RunnerBase(Thread):
 
         self.context = Context()
         self.instance = None
-        self.logger = logging.getLogger('engine.WorkflowRunner')
+        self.logger = logging.getLogger('engine.%s' % self.__class__.__name__)
         self.properties = properties
         self.run_id = run_id
         self.workflow = workflow
@@ -55,9 +55,14 @@ class InlineRunner(RunnerBase):
             # Execute the ready queue
             for task in ready_queue:
                 task.resolve_inputs()
-                self.logger.info('Task [%s] started.' % task.name)
-                task.run()
-                self.logger.info('Task [%s] completed with status [%s].' % (task.name, task.status))
+                for i in range(3):
+                    self.logger.info('Task [%s] execution started (Attempt %d).' % (task.name, i+1))
+                    task.run()
+                    if task.is_successful():
+                        self.logger.info('Task [%s] execution completed successfully.' % task.name)
+                        break
+                    else:
+                        self.logger.info('Task [%s] execution failed.' % task.name)
 
             if len(ready_queue) == 0:
                 # Deadlock or no more executable tasks
@@ -76,6 +81,8 @@ class InlineRunner(RunnerBase):
                 elif task.is_failure():
                     failure_queue.append(task)
 
+        if len(skipped_queue) == 0 and len(failure_queue) == 0:
+            self.logger.info('All tasks executed successfully!')
         self.logger.info('Completed workflow run.')
 
     def __str__(self):
