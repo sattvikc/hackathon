@@ -25,10 +25,13 @@ class RunnerBase(Thread):
     def set_default_context_values(self):
         self.context.set('run.id', self.run_id)
 
+    def get_properties(self):
+        return self.properties
+
     def prepare(self):
         self.instance = Compiler.compile(self.workflow)
         self.instance.set_context(self.context)
-        self.instance.prepare_inputs()
+        self.instance.prepare_inputs(self)
 
     def validate(self):
         pass

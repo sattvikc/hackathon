@@ -24,12 +24,12 @@ class WorkflowInstance(object):
             for dep in task.task.dependencies:
                 task.add_dependency(self.tasks_dict.get(dep))
 
-    def prepare_dict(self, value):
+    def prepare_dict(self, value, properties={}):
         if 'src' in value:
             src = value.get('src')
             if src == 'properties':
                 key = value.get('key')
-                return PropertyValue(key)
+                return PropertyValue(key, properties)
             elif src == 'taskout':
                 task, output = value.get('key').split('.')
                 return TaskOutputValue(self.tasks_dict.get(task), output)
@@ -41,11 +41,11 @@ class WorkflowInstance(object):
                 result.update({k:v})
             return result
 
-    def prepare_inputs(self):
+    def prepare_inputs(self, runner):
         for task in self.tasks:
             for key, value in task.inputs.items():
                 if isinstance(value, dict):
-                    value = self.prepare_dict(value)
+                    value = self.prepare_dict(value, runner.get_properties())
                 task.set_input(key, value)
 
     def __str__(self):
