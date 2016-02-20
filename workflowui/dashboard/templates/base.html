@@ -1,0 +1,29 @@
+{% load staticfiles %}
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+
+    <title>Cloud Task Manager</title>
+
+    <!-- CSS -->
+    <link rel="stylesheet" type="text/css" href="{% static 'third-party/bootstrap/css/bootstrap.min.css' %}" />
+    <link rel="stylesheet" href="{% static 'third-party/font-awesome/css/font-awesome.min.css' %}" />
+    <link rel="stylesheet" href="{% static 'third-party/themify/themify-icons.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+    
+    {% block head %}{% endblock head %}
+  </head>
+  <body>
+    {% block header %}{% endblock header %}
+    {% block content %}{% endblock content %}
+    {% block footer %}{% endblock footer %}
+
+    <!-- SCRIPTS -->
+    <script type="text/javascript" src="{% static 'third-party/jquery/jquery-2.1.3.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'third-party/bootstrap/js/bootstrap.min.js' %}"></script>
+
+    {% block extra-head %}{% endblock extra-head %}
+  </body>
+</html>

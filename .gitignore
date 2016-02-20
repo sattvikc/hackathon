@@ -1,0 +1,4 @@
+*.pyc
+.sass-cache
+db.sqlite3
+*.css.map
