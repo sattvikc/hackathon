@@ -1,37 +1,30 @@
 workflow:
   name: "SampleWorkflow"
   tasks:
-    - name: task01
-      def: "builtin.dummy"
+    - name: add01
+      def: "builtin.add"
       inputs:
-        x: "Hello"
-        y: "World"
+        a: 10
+        b: 20
       outputs:
-        - a
-        - b
-    - name: task02
-      def: "builtin.dummy"
-      outputs:
-        - a
-      dependencies:
-        - task01
-    - name: task03
-      def: "builtin.dummy"
-      dependencies:
-        - task01
-        - task02
+        - c
+    - name: mul01
+      def: "builtin.multiply"
       inputs:
-        x:
-          src: "properties"
-          key: "hello.world"
-        y:
+        a: 30
+        b:
+          src: taskout
+          key: "add01.c"
+      outputs:
+        - c
+      dependencies:
+        - add01
+    - name: print01
+      def: "builtin.print"
+      dependencies:
+        - add01
+        - mul01
+      inputs:
+        result:
           src: "taskout"
-          key: "task01.a"
-        z:
-          src: "context"
-          key: "engine.start_time"
-        a:
-          val: "I'm some dictionary value"
-          val2:
-            src: "properties"
-            key: "resolve.me"
+          key: "mul01.c"
