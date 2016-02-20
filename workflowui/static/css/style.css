@@ -33,9 +33,13 @@
 
 .task-node__inputport {
   fill: #40D47E; }
+  .task-node__inputport:hover {
+    cursor: pointer; }
 
 .task-node__outputport {
   fill: #E74C3C; }
+  .task-node__outputport:hover {
+    cursor: pointer; }
 
 .task-node-connector {
   fill: none;

@@ -12,12 +12,44 @@ function InputPort(options) {
   self.xOffset = options.xOffset;
   self.yOffset = options.yOffset;
 
+  self.handleMouseOver = function() {
+    self.circle.attr('r', self.task.ui.port_hover_radius);
+  }
+
+  self.handleMouseOut = function() {
+    self.circle.attr('r', self.task.ui.port_radius);
+  }
+
+  self.handleDragDrop = function() {
+    var drag = d3.behavior.drag()
+      .on('dragstart', function() {
+        d3.event.sourceEvent.stopPropagation();
+      })
+      .on('drag', function(d, i) {
+        d3.event.sourceEvent.stopPropagation();
+      })
+      .on('dragend', function() {
+        d3.event.sourceEvent.stopPropagation();
+      });
+    return drag;
+  }
+
+  self.handleDoubleClick = function() {
+    self.task.inputs[self.name] = {'src': '', 'key': ''};
+    self.taskObj.render();
+    self.viewport.renderConnectors();
+  }
+
   self.init = function() {
-    self.taskNode.append('circle')
+    self.circle = self.taskNode.append('circle')
       .attr('class', 'task-node__inputport')
       .attr('cx', self.xOffset)
       .attr('cy', self.yOffset)
-      .attr('r', self.task.ui.port_radius);
+      .attr('r', self.task.ui.port_radius)
+      .on('mouseover', self.handleMouseOver)
+      .on('mouseout', self.handleMouseOut)
+      .call(self.handleDragDrop())
+      .on('dblclick', self.handleDoubleClick);
   }
 
   self.coordinates = function() {
@@ -43,6 +75,14 @@ function OutputPort(options) {
   self.index = options.index;
   self.tempConnector = false;
   self.tempInputPort = false;
+
+  self.handleMouseOver = function() {
+    self.circle.attr('r', self.task.ui.port_hover_radius);
+  }
+
+  self.handleMouseOut = function() {
+    self.circle.attr('r', self.task.ui.port_radius);
+  }
 
   self.handleDragDrop = function() {
     var drag = d3.behavior.drag()
@@ -74,18 +114,22 @@ function OutputPort(options) {
           self.viewport.addConnector(self, self.tempInputPort);
         }
         self.tempInputPort = false;
-        self.tempConnector.remove();
+        if(self.tempConnector) {
+          self.tempConnector.remove();
+        }
       });
     return drag;
   }
 
   self.init = function() {
-    self.taskNode.append('circle')
+    self.circle = self.taskNode.append('circle')
       .attr('class', 'task-node__outputport')
       .attr('cx', self.xOffset)
       .attr('cy', self.yOffset)
       .attr('r', self.task.ui.port_radius)
-      .call(self.handleDragDrop());
+      .call(self.handleDragDrop())
+      .on('mouseover', self.handleMouseOver)
+      .on('mouseout', self.handleMouseOut);
   }
 
   self.coordinates = function() {
@@ -153,7 +197,7 @@ function TaskNode(viewport, svg, task) {
   self.renderInputPorts = function() {
     self.inputPorts = [];
     var xOffset = 0;
-    var yOffset = (-task.ui.port_radius/2);
+    var yOffset = (-task.ui.port_radius);
     var index = 0;
     if(!('inputs' in task)) {
       return
@@ -178,7 +222,7 @@ function TaskNode(viewport, svg, task) {
   self.renderOutputPorts = function() {
     self.outputPorts = [];
     var xOffset = task.ui.width;
-    var yOffset = (task.ui.height + task.ui.port_radius/2);
+    var yOffset = (task.ui.height + task.ui.port_radius);
     if(!('outputs' in task)) {
       return
     }
