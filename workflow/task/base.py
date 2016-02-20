@@ -18,8 +18,8 @@ class Task(Register):
     def set_input(self, key, value):
         self.inputs[key] = value
 
-    def get_input(self, key):
-        return self.inputs.get(key, None)
+    def get_input(self, key, default=None):
+        return self.inputs.get(key, default)
 
     def set_output(self, key, value):
         self.outputs[key] = value
