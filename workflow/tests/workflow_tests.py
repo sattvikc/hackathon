@@ -4,6 +4,7 @@ from workflow.engine.runner import InlineRunner
 
 import yaml
 
+
 WORKFLOW1 = yaml.load("""workflow:
   name: "SampleWorkflow"
   tasks:
