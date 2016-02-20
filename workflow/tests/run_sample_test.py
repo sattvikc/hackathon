@@ -4,7 +4,7 @@ import yaml
 import json
 
 from workflow.server import Server
-import workflow.task.builtin
+import workflow.task.builtinfortest
 
 
 logging.basicConfig(
