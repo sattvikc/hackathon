@@ -1,3 +1,44 @@
+.task-node {
+  width: 250px;
+  height: 80px;
+  padding: 15px;
+  border: 1px solid #DDD;
+  -webkit-border-radius: 2px;
+  -moz-border-radius: 2px;
+  -ms-border-radius: 2px;
+  border-radius: 2px;
+  -webkit-transition: all 0.3s;
+  -moz-transition: all 0.3s;
+  -ms-transition: all 0.3s;
+  -o-transition: all 0.3s;
+  transition: all 0.3s; }
+  .task-node:hover {
+    border-color: #3F9EDD;
+    cursor: pointer; }
+  .task-node.task-node--selected {
+    border-color: #3F9EDD;
+    border-bottom-width: 2px; }
+    .task-node.task-node--selected .task-node__name {
+      color: #3F9EDD; }
 
+.task-node__name {
+  font-size: 20px;
+  line-height: 24px;
+  color: #000; }
+
+.task-node__def {
+  font-size: 12px;
+  color: #888; }
+
+body {
+  position: relative;
+  height: 100vh; }
+
+#workflow-area {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0; }
 
 /*# sourceMappingURL=style.css.map */

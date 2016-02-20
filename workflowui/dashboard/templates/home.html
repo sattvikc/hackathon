@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+
+{% block extra-head %}
+  <script type="text/javascript">
+    var viewport = new WorkflowViewPort('#workflow-area');
+    viewport.addTaskItem({
+      "name": "task03",
+      "def": "builtin.dummy",
+      "inputs": {
+        "y": {
+          "src": "taskout",
+          "key": "task01.a"
+        },
+        "z": {
+          "src": "context",
+          "key": "engine.start_time"
+        },
+        "x": {
+          "src": "properties",
+          "key": "hello.world"
+        }
+      },
+      "dependencies": [
+        "task01",
+        "task02"
+      ],
+      "ui": {
+        "x": 100,
+        "y": 100,
+        "width": 250,
+        "height": 80,
+        "selected": false
+      }
+    });
+    viewport.addTaskItem({
+      "name": "task01",
+      "def": "builtin.dummy",
+      "inputs": {
+        "y": {
+          "src": "taskout",
+          "key": "task01.a"
+        },
+        "z": {
+          "src": "context",
+          "key": "engine.start_time"
+        },
+        "x": {
+          "src": "properties",
+          "key": "hello.world"
+        }
+      },
+      "dependencies": [
+        "task01",
+        "task02"
+      ],
+      "ui": {
+        "x": 0,
+        "y": 0,
+        "width": 250,
+        "height": 80,
+        "selected": false
+      }
+    });
+  </script>
+{% endblock extra-head %}
+
+{% block content %}
+  <div id="workflow-area">
+  </div>
+  <script type="text/template" id="tmpl-task-node">
+    {% verbatim %}
+      <div>
+        <div class="task-node {{if task.ui.selected}}task-node--selected{{/if}}">
+          <div class="task-node__name">
+            ${task.name}
+          </div>
+          <div class="task-node__def">
+            ${task.def}
+          </div>
+        </div>
+      </div>
+    {% endverbatim %}
+  </script>
+{% endblock content %}
