@@ -7,7 +7,7 @@ from .run.context import Context
 
 
 class RunnerBase(Thread):
-    def __init__(self, server, workflow, properties={}):
+    def __init__(self, server, workflow_instance):
         self.server = server
         run_id = str(uuid.uuid4())
         super(RunnerBase, self).__init__(name='Runner[%s]' % str(uuid.uuid4()))
@@ -15,23 +15,18 @@ class RunnerBase(Thread):
         self.context = Context()
         self.instance = None
         self.logger = logging.getLogger('engine.%s' % self.__class__.__name__)
-        self.properties = properties
         self.run_id = run_id
-        self.workflow = workflow
-        self.workflow_name = workflow['workflow']['name']
+        self.workflow_instance = workflow_instance
+        self.workflow_name = workflow_instance.name
 
         self.set_default_context_values()
 
     def set_default_context_values(self):
         self.context.set('run.id', self.run_id)
 
-    def get_properties(self):
-        return self.properties
-
     def prepare(self):
-        self.instance = Compiler.compile(self.workflow)
-        self.instance.set_context(self.context)
-        self.instance.prepare_inputs(self)
+        self.workflow_instance.set_context(self.context)
+        self.workflow_instance.prepare_inputs(self)
 
     def validate(self):
         pass
@@ -46,7 +41,7 @@ class InlineRunner(RunnerBase):
         failure_queue = []
         skipped_queue = []
 
-        for task in self.instance.tasks:
+        for task in self.workflow_instance.tasks:
             task_queue.append(task)
 
         while len(task_queue) > 0:

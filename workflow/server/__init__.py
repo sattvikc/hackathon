@@ -4,11 +4,12 @@ from queue import Queue
 
 from ..engine.runner import InlineRunner
 from .scheduler import Scheduler
+from ..engine.compiler import Compiler
 
 
-class Server(Thread):
+class WorkflowServer(Thread):
     def __init__(self):
-        super(Server, self).__init__(name='Server')
+        super(WorkflowServer, self).__init__(name='WorkflowServer')
         self.logger = logging.getLogger('workflow.Server')
         self.cmd_queue = Queue()
         self.instances = []
@@ -18,7 +19,8 @@ class Server(Thread):
         self.cmd_queue.put(('submit', (workflow, properties)))
 
     def submit_exec(self, workflow, properties):
-        instance = InlineRunner(server=self, workflow=workflow, properties=properties)
+        workflow_instance = Compiler.compile(definition=workflow, properties=properties)
+        instance = InlineRunner(server=self, workflow_instance=workflow_instance)
         instance.prepare()
         instance.validate()
         instance.start()
@@ -27,14 +29,19 @@ class Server(Thread):
     def get_scheduler(self):
         return self.scheduler
 
-    def exit(self):
-        self.cmd_queue.put(('exit', None))
+    def finish(self):
+        self.cmd_queue.put(('finish', None))
+        self.join()
+
+    def init(self):
+        pass
 
     def run(self):
+        self.init()
         while True:
             cmd, data = self.cmd_queue.get()
-            if cmd == 'exit':
-                self.logger.info('[exit] command received.')
+            if cmd == 'finish':
+                self.logger.info('[finish] command received.')
                 break
             elif cmd == 'submit':
                 workflow, properties = data

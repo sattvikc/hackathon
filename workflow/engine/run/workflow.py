@@ -41,11 +41,11 @@ class WorkflowInstance(object):
                 result.update({k:v})
             return result
 
-    def prepare_inputs(self, runner):
+    def prepare_inputs(self, properties={}):
         for task in self.tasks:
             for key, value in task.inputs.items():
                 if isinstance(value, dict):
-                    value = self.prepare_dict(value, runner.get_properties())
+                    value = self.prepare_dict(value, properties)
                 task.set_input(key, value)
 
     def __str__(self):

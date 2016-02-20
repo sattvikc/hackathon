@@ -5,9 +5,9 @@ from ..task.base import Task
 
 class Compiler(object):
     @classmethod
-    def compile(cls, workflow):
+    def compile(cls, definition, properties={}):
         wi = WorkflowInstance()
-        workflow = workflow['workflow']
+        workflow = definition['workflow']
         wi.set_name(workflow.get('name'))
 
         for task_def in workflow.get('tasks'):
@@ -23,4 +23,5 @@ class Compiler(object):
             wi.add_task(ti)
 
         wi.compute_dependencies()
+        wi.prepare_inputs(properties)
         return wi

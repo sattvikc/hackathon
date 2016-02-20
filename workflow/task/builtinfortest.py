@@ -1,5 +1,5 @@
 from .base import Task
-import time
+import random
 
 
 class DummyTask(Task):
@@ -7,11 +7,14 @@ class DummyTask(Task):
 
     def run(self):
         print('I am a dummy task. I do nothing!')
-        print('Wasted 2 seconds.')
-        self.set_output('dummy_out', 'Dummy output!')
-        self.set_output('a', 'AAA')
-        self.set_output('b', 'BBB')
-        self.set_output('c', 'CCC')
+
+
+class RandomFailTask(Task):
+    ID = 'builtin.random'
+
+    def run(self):
+        if random.random() < 0.5:
+            raise Exception('Random Error!')
 
 
 class AddTask(Task):
