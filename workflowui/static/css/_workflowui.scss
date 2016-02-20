@@ -39,10 +39,16 @@ $connector-color: #e67e22;
 
 .task-node__inputport {
   fill: $input-port-color;
+  &:hover {
+    cursor: pointer;
+  }
 }
 
 .task-node__outputport {
   fill: $output-port-color;
+  &:hover {
+    cursor: pointer;
+  }
 }
 
 .task-node-connector {
