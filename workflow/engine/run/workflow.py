@@ -16,6 +16,9 @@ class WorkflowInstance(object):
         self.tasks.append(task)
         self.tasks_dict[task.name] = task
 
+    def get_task(self, task_name):
+        return self.tasks_dict.get(task_name)
+
     def set_context(self, context):
         self.context = context
 
