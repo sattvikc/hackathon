@@ -9,9 +9,8 @@ from .run.context import Context
 
 
 class RunnerBase(Thread):
-    def __init__(self, server, workflow_instance):
+    def __init__(self, server, workflow_instance, run_id):
         self.server = server
-        run_id = str(uuid.uuid4())
         super(RunnerBase, self).__init__(name='Runner[%s]' % str(uuid.uuid4()))
 
         self.context = Context()
@@ -68,10 +67,12 @@ class InlineRunner(RunnerBase):
                 task.resolve_inputs()
                 for i in range(3):
                     self.logger.info('Task [%s] execution started (Attempt %d).' % (task.name, i+1))
+                    self.status['tasks'].setdefault(task.name, {}).update({'inputs': task.inputs})
                     self.status['tasks'].setdefault(task.name, {}).update({'state': 'RUNNING'})
                     task.run()
                     if task.is_successful():
                         self.logger.info('Task [%s] execution completed successfully.' % task.name)
+                        self.status['tasks'].setdefault(task.name, {}).update({'outputs': task.outputs})
                         self.status['tasks'].setdefault(task.name, {}).update({'state': 'SUCCESSFUL'})
                         break
                     else:
