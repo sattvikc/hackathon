@@ -2,64 +2,64 @@
 
 {% block extra-head %}
   <script type="text/javascript">
-    var viewport = new WorkflowViewPort('#workflow-area');
-
-    var tasks = [
-      {
-        "name": "task03",
-        "def": "builtin.dummy",
-        "inputs": {
-          "y": {
-            "src": "taskout",
-            "key": "task01.a"
+    var workflow = {
+      "name": "SampleWorkflow",
+      "tasks": [
+        {
+          "name": "task03",
+          "def": "builtin.dummy",
+          "inputs": {
+            "y": {
+              "src": "taskout",
+              "key": "task01.a"
+            },
+            "x": {
+              "src": "",
+              "key": ""
+            },
           },
-          "x": {
-            "src": "",
-            "key": ""
+          "dependencies": [
+            "task01",
+            "task02"
+          ],
+          "ui": {
+            "x": 100,
+            "y": 100,
+            "width": 250,
+            "height": 80,
+            "selected": false,
+            "port_radius": 4,
+            "port_hover_radius": 6,
+            "port_spacing": 20
+          }
+        },
+        {
+          "name": "task01",
+          "def": "builtin.dummy",
+          "inputs": {
           },
-        },
-        "dependencies": [
-          "task01",
-          "task02"
-        ],
-        "ui": {
-          "x": 100,
-          "y": 100,
-          "width": 250,
-          "height": 80,
-          "selected": false,
-          "port_radius": 4,
-          "port_hover_radius": 6,
-          "port_spacing": 20
+          "outputs": [
+            "a",
+            "b"
+          ],
+          "dependencies": [
+            "task01",
+            "task02"
+          ],
+          "ui": {
+            "x": 0,
+            "y": 0,
+            "width": 250,
+            "height": 80,
+            "selected": false,
+            "port_radius": 4,
+            "port_hover_radius": 6,
+            "port_spacing": 20
+          }
         }
-      },
-      {
-        "name": "task01",
-        "def": "builtin.dummy",
-        "inputs": {
-        },
-        "outputs": [
-          "a",
-          "b"
-        ],
-        "dependencies": [
-          "task01",
-          "task02"
-        ],
-        "ui": {
-          "x": 0,
-          "y": 0,
-          "width": 250,
-          "height": 80,
-          "selected": false,
-          "port_radius": 4,
-          "port_hover_radius": 6,
-          "port_spacing": 20
-        }
-      }
-    ];
-    viewport.addTasks(tasks);
-    viewport.renderConnectors();
+      ]
+    };
+    var viewport = new WorkflowViewPort('#workflow-area', workflow);
   </script>
 {% endblock extra-head %}
 

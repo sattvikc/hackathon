@@ -256,8 +256,9 @@ function TaskNode(viewport, svg, task) {
   self.init();
 }
 
-function WorkflowViewPort(identifier) {
+function WorkflowViewPort(identifier, workflow) {
   var self = this;
+  self.workflow = workflow;
   self.taskNodes = [];
   self.connectors = [];
   self.connectorPaths = [];
@@ -401,6 +402,8 @@ function WorkflowViewPort(identifier) {
       .append('svg')
       .attr('width', '100%')
       .attr('height', '100%');
+    self.addTasks(self.workflow.tasks);
+    self.renderConnectors();
   }
 
   self.init();
