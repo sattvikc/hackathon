@@ -19,7 +19,8 @@ class Workflow(models.Model):
         for task in tasks:
             if 'ui' in task:
                 del task['ui']
-        return json.dumps(temp, sort_keys=True, indent=4)
+        text = json.dumps(temp, sort_keys=True, indent=4)
+        return text.replace('    ', '&nbsp;')
 
 
 class WorkflowRun(models.Model):
@@ -33,4 +34,5 @@ class WorkflowRun(models.Model):
         return self.workflow.name + '.' + self.run_id
 
     def properties_json(self):
-        return json.dumps(self.properties, sort_keys=True, indent=4)
+        text = json.dumps(self.properties, sort_keys=True, indent=4)
+        return text.replace('    ', '&nbsp;')

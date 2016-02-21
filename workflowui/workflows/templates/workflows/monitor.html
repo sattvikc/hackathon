@@ -33,7 +33,7 @@
     </div>
     <div class="col-md-6">
       <h5>Properties</h5>
-      <pre>{{ workflow_run.properties_json }}</pre>
+      <code>{{ workflow_run.properties_json|safe|linebreaksbr }}</code>
     </div>
 
     <div style="clear: both;"></div>

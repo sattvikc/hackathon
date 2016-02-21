@@ -123,7 +123,8 @@ body {
   position: absolute;
   bottom: 20px;
   left: 20px;
-  opacity: 0.6; }
+  opacity: 0.6;
+  max-width: 400px; }
   .workflow-info:hover {
     opacity: 1; }
   .workflow-info .name {
