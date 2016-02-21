@@ -222,7 +222,14 @@
                   <label>Task</label>
                 </div>
                 <div class="properties-input">
-                  <input name="dependencies-${index}" class="form-control input-sm" type="text" value="${value}" />
+                  <select name="dependencies-${index}" class="form-control input-sm">
+                    <option value="" {{if value == ''}}selected{{/if}}>Select Task</option>
+                    {{each(i,name) taskNames}}
+                      {{if name != task.name }}
+                        <option value="${name}" {{if value == name}}selected{{/if}}>${name}</option>
+                      {{/if}}
+                    {{/each}}
+                  </select>
                 </div>
               </div>
             </div>
