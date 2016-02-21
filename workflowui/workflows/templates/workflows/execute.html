@@ -37,12 +37,12 @@
             <tr>
               <td><input type="text" name="key" class="form-control" value="{{ prop.0 }}"></input></td>
               <td><textarea name="value" class="form-control">{{ prop.1|safe }}</textarea></td>
-              <td><a href="#" class="btn btn-sm btn-danger" onclick="$(this).parent().parent().remove();">remove</a></td>
+              <td><a href="#" class="btn btn-sm btn-danger" onclick="$(this).parent().parent().remove();return false;">remove</a></td>
             </tr>
           {% endfor %}
         </tbody>
       </table>
-      <a href="#" class="btn btn-sm btn-success" onclick="add_row();">Add</a>
+      <a href="#" class="btn btn-sm btn-success" onclick="add_row();return false;">Add</a>
       <hr/>
       <button type="submit" class="btn btn-sm btn-primary">Submit</button>
     </form>
@@ -55,7 +55,7 @@
     var row = $('<tr>' +
                 '<td><input type="text" name="key" class="form-control"></input></td>' +
                 '<td><textarea name="value" class="form-control"></textarea></td>' +
-                '<td><a href="#" class="btn btn-sm btn-danger" onclick="$(this).parent().parent().remove();">remove</a></td>' +
+                '<td><a href="#" class="btn btn-sm btn-danger" onclick="$(this).parent().parent().remove();return false;">remove</a></td>' +
               '</tr>');
     $('#key-value-list').append(row);
   }
