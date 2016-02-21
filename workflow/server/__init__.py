@@ -50,6 +50,8 @@ class WorkflowServer(Thread):
 
     def get_status(self, run_id):
         inst = self.instances_dict.get(run_id)
+        if inst is None:
+            return {}
         if inst.is_complete():
             self.instances.remove(inst)
             self.instances_dict.pop(run_id)

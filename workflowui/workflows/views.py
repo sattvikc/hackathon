@@ -6,8 +6,14 @@ from workflow.client import WorkflowClient
 from .models import Workflow, WorkflowRun
 import json
 
+
 ENDPOINT = 'http://localhost:12120/api/1.0'
 CLIENT = WorkflowClient(ENDPOINT)
+
+TASK_DEFS = CLIENT.server_task_types()
+TASK_DEF_META = {}
+for tdef in TASK_DEFS:
+    TASK_DEF_META[tdef] = CLIENT.server_task_type_meta(tdef)
 
 
 def wlist(request):
@@ -30,6 +36,8 @@ def edit(request, pk):
     wf = Workflow.objects.get(pk=pk)
     return render(request, 'workflows/edit.html', {
             'workflow': wf,
+            'task_defs': TASK_DEFS,
+            'task_def_meta': TASK_DEF_META,
         })
 
 
@@ -62,6 +70,8 @@ def submit(request, pk):
         task['inputs'] = {}
         for inp in inputs:
             task['inputs'][inp['name']] = inp
+            if inp['src'] == 'value':
+                task['inputs'][inp['name']] = inp['key']
             inp.pop('name')
 
     wf_def = { 'workflow': wf_def }
@@ -86,7 +96,7 @@ def submit(request, pk):
 
 
 def mlist(request):
-    wfrs = WorkflowRun.objects.all()
+    wfrs = WorkflowRun.objects.all().order_by('-pk')
     return render(request, 'workflows/run-list.html', {
             'workflow_runs': wfrs,
         })
@@ -105,4 +115,5 @@ def monitor(request, pk):
             'workflow': wf_run.workflow,
             'run_id': wf_run.run_id,
             'status': status,
+            'workflow_run': wf_run,
         })

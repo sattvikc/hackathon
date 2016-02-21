@@ -612,6 +612,13 @@ function WorkflowViewPort(identifier, areaIdentifier, workflow) {
         var field = fields[i];
         task[field.name] = field.value;
       }
+      var meta = task_def_meta[task.def];
+      for(var i=0; i<meta.inputs.length; i++) {
+        task.inputs.push({name: meta.inputs[i][0], src:'', key:''});
+      }
+      for(var i=0; i<meta.outputs.length; i++) {
+        task.outputs.push({name: meta.outputs[i][0], src:'', key:''});
+      }
       self.addTaskItem(task);
       self.workflow.tasks.push(task);
       $('#modal-new-task').modal('hide');

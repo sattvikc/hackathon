@@ -5,6 +5,7 @@
   <script type="text/javascript">
     var workflow = {{ workflow.definition|jsonify }};
     var viewport = new WorkflowViewPort('#workflow-window', '#workflow-area', workflow);
+    var task_def_meta = {{ task_def_meta|jsonify }};
   </script>
 {% endblock extra-head %}
 
@@ -48,7 +49,11 @@
                 <label>Def</label>
               </div>
               <div class="properties-input">
-                <input name="def" class="form-control input-sm" type="text" />
+                <select name="def" class="form-control input-sm">
+                  {% for def in task_defs %}
+                    <option value="{{ def }}">{{ def }}</option>
+                  {% endfor %}
+                </select>
               </div>
             </div>
           </div>
