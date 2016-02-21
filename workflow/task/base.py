@@ -7,6 +7,11 @@ class Task(Register):
     REGISTER_BASE = True
     LOGGER = logging.getLogger('task.Registry')
 
+    NAME = 'UnnamedTask'
+    DESCRIPTION = 'Description not available.'
+    INPUTS = []
+    OUTPUTS = []
+
     def __init__(self):
         self.inputs = {}
         self.outputs = {}

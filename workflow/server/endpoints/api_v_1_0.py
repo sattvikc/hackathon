@@ -15,7 +15,7 @@ def api_v10_app(wf_server):
         }, sort_keys=True)
 
     @app.route('/workflow/submit', method='PUT')
-    def submit():
+    def workflow_submit():
         workflow = json.loads(request.forms.get('workflow'))
         properties = json.loads(request.forms.get('properties', '{}'))
 
@@ -26,8 +26,18 @@ def api_v10_app(wf_server):
         }, sort_keys=True)
 
     @app.route('/workflow/status/<run_id>')
-    def status(run_id):
+    def workflow_status(run_id):
         response.content_type = 'application/json'
         return json.dumps(wf_server.get_status(run_id), sort_keys=True)
+
+    @app.route('/server/task-types')
+    def server_task_types():
+        response.content_type = 'application/json'
+        return json.dumps(wf_server.get_task_types(), sort_keys=True)
+
+    @app.route('/server/task-type-meta/<key>')
+    def server_task_type_meta(key):
+        response.content_type = 'application/json'
+        return json.dumps(wf_server.get_task_meta(key), sort_keys=True)
 
     return app

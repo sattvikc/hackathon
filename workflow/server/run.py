@@ -11,6 +11,7 @@ import logging
 
 if __name__ == '__main__':
     wf_server = WorkflowServer()
+
     wf_server.start()
     logging.basicConfig(
         level=logging.INFO,

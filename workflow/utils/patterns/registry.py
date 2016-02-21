@@ -21,3 +21,7 @@ class Register(object, metaclass=RegisterMetaClass):
     @classmethod
     def get_class(cls, _id):
         return cls._REGISTRY.get(_id)
+
+    @classmethod
+    def get_keys(cls):
+        return cls._REGISTRY.keys()

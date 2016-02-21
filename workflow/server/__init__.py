@@ -1,6 +1,7 @@
-from ..engine.runner import InlineRunner
 from .scheduler import Scheduler
 from ..engine.compiler import Compiler
+from ..engine.runner import InlineRunner
+from ..task.base import Task
 
 from threading import Thread
 from queue import Queue
@@ -17,6 +18,21 @@ class WorkflowServer(Thread):
         self.instances = []
         self.instances_dict = {}
         self.scheduler = Scheduler()
+
+    def get_task_types(self):
+        return sorted(list(Task.get_keys()))
+
+    def get_task_meta(self, key):
+        cls = Task.get_class(key)
+        if cls is None:
+            return None
+        return {
+            'key': cls.ID,
+            'name': cls.NAME,
+            'description': cls.DESCRIPTION,
+            'inputs': cls.INPUTS,
+            'outputs': cls.OUTPUTS,
+        }
 
     def submit(self, workflow, properties={}):
         run_id = str(uuid.uuid4())
