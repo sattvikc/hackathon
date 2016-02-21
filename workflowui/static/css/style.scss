@@ -1,16 +1,144 @@
 @import 'mixins.scss';
 @import 'workflowui.scss';
 
+$properties-width: 250px;
+$error-color: #E74C3C;
+$success-color: #18BC9C;
+
 body {
   position: relative;
   height: 100vh;
 }
 
-#workflow-area {
+.workflow-window {
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
   background-image: url('../img/noisy_grid.png');
+
+  .workflow-area {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0px;
+  }
+
+  .workflow-properties {
+    position: absolute;
+    right: -$properties-width;
+    top: 0;
+    bottom: 0;
+    width: $properties-width;
+    background-color: #FFF;
+    display: none;
+    @include box-shadow(0 0 5px 0 #BBB);
+  }
+
+  &.show-workflow-properties {
+    .workflow-area {
+      right: $properties-width;
+    }
+    .workflow-properties {
+      display: block;
+      right: 0;
+    }
+  }
+}
+
+.properties-form {
+  padding: 15px;
+}
+
+.properties-form__heading {
+  font-size: 20px;
+  color: $selected-color;
+}
+
+.properties-form__subheading {
+  font-size: 15px;
+  color: #000;
+}
+
+.properties-group {
+  padding: 5px 10px;
+  border: 1px dashed #EEE;
+  margin: 10px 0;
+  position: relative;
+  font-size: 12px;
+
+  .delete-properties-group {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    line-height: 20px;
+    text-align: center;
+    border-radius: 50%;
+    background-color: $error-color;
+    color: #FFF;
+    font-size: 10px;
+    i {
+      line-height: 19px;
+    }
+    opacity: 0;
+  }
+
+  &:hover {
+    .delete-properties-group {
+      opacity: 0.5;
+      &:hover, &:active, &:focus {
+        opacity: 1;
+        text-decoration: none;
+      }
+    }
+  }
+}
+
+.properties-form__field {
+  display: table;
+  padding: 2px 0;
+  width: 100%;
+  label {
+    margin: 0px;
+    font-size: 12px;
+    color: #000;
+  }
+
+  .properties-label {
+    display: table-cell;
+    width: 25%;
+    vertical-align: middle;
+  }
+
+  .properties-input {
+    display: table-cell;
+    width: 75%;
+  }
+}
+
+.add-property {
+  text-decoration: none;
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  line-height: 20px;
+  text-align: center;
+  border-radius: 50%;
+  background-color: $success-color;
+  color: #FFF;
+  font-size: 10px;
+  opacity: 0.8;
+  i {
+    line-height: 19px;
+  }
+  &:hover, &:active, &:focus {
+    opacity: 1;
+    color: #FFF;
+    text-decoration: none;
+  }
 }

@@ -8,16 +8,19 @@
         {
           "name": "task03",
           "def": "builtin.dummy",
-          "inputs": {
-            "y": {
+          "inputs": [
+            {
+              "name": "y",
               "src": "taskout",
               "key": "task01.a"
             },
-            "x": {
+            {
+              "name": "x",
               "src": "",
               "key": ""
             },
-          },
+          ],
+          "outputs": [],
           "dependencies": [
             "task01",
             "task02"
@@ -36,8 +39,8 @@
         {
           "name": "task01",
           "def": "builtin.dummy",
-          "inputs": {
-          },
+          "inputs": [
+          ],
           "outputs": [
             "a",
             "b"
@@ -59,12 +62,14 @@
         }
       ]
     };
-    var viewport = new WorkflowViewPort('#workflow-area', workflow);
+    var viewport = new WorkflowViewPort('#workflow-window', '#workflow-area', workflow);
   </script>
 {% endblock extra-head %}
 
 {% block content %}
-  <div id="workflow-area">
+  <div id="workflow-window" class="workflow-window">
+    <div class="workflow-area" id="workflow-area"></div>
+    <div class="workflow-properties" id="workflow-properties"></div>
   </div>
   <script type="text/template" id="tmpl-task-node">
     {% verbatim %}
@@ -77,6 +82,94 @@
             ${task.def}
           </div>
         </div>
+      </div>
+    {% endverbatim %}
+  </script>
+  <script type="text/template" id="tmpl-task-properties">
+    {% verbatim %}
+      <div>
+        <form class="properties-form">
+          <div class="properties-form__heading">
+            ${task.name}
+          </div>
+
+          <div class="properties-form__subheading">
+            Inputs
+            <span class="pull-right">
+              <a class="add-property add-input-properties" href="#">
+                <i class="ti-plus"></i>
+              </a>
+            </span>
+          </div>
+          {{each(index, value) task.inputs}}
+            <div class="properties-group">
+              <a class="delete-properties-group" href="#" data-type="inputs" data-index="${index}">
+                <i class="ti-close"></i>
+              </a>
+              <div class="properties-form__field">
+                <div class="properties-label">
+                  <label>Name</label>
+                </div>
+                <div class="properties-input">
+                  <input name="inputs-name-${index}" class="form-control input-sm" type="text" value="${value.name}" />
+                </div>
+              </div>
+              <div class="properties-form__field">
+                <div class="properties-label">
+                  <label>Source</label>
+                </div>
+                <div class="properties-input">
+                  <select class="form-control input-sm" name="inputs-src-${index}">
+                    <option value="taskout" {{if value.src == 'taskout'}}selected{{/if}}>Taskout</option>
+                    <option value="properties" {{if value.src == 'properties'}}selected{{/if}}>Properties</option>
+                    <option value="value" {{if value.src == 'value'}}selected{{/if}}>Value</option>
+                  </select>
+                </div>
+              </div>
+              <div class="properties-form__field">
+                <div class="properties-label">
+                  <label>Key</label>
+                </div>
+                <div class="properties-input">
+                  <input name="inputs-key-${index}" class="form-control input-sm" type="text" value="${value.key}" />
+                </div>
+              </div>
+            </div>
+          {{/each}}
+          {{if task.inputs.length == 0}}
+            <div class="properties-group">
+              No inputs defined
+            </div>
+          {{/if}}
+          <div class="properties-form__subheading">
+            Outputs
+            <span class="pull-right">
+              <a class="add-property add-output-properties" href="#">
+                <i class="ti-plus"></i>
+              </a>
+            </span>
+          </div>
+          {{each(index, value) task.outputs}}
+            <div class="properties-group">
+              <a class="delete-properties-group" href="#" data-type="outputs" data-index="${index}">
+                <i class="ti-close"></i>
+              </a>
+              <div class="properties-form__field">
+                <div class="properties-label">
+                  <label>Name</label>
+                </div>
+                <div class="properties-input">
+                  <input name="outputs-${index}" class="form-control input-sm" type="text" value="${value}" />
+                </div>
+              </div>
+            </div>
+          {{/each}}
+          {{if task.outputs.length == 0}}
+            <div class="properties-group">
+              No outputs defined
+            </div>
+          {{/if}}
+        </form>
       </div>
     {% endverbatim %}
   </script>

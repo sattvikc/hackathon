@@ -50,12 +50,108 @@ body {
   position: relative;
   height: 100vh; }
 
-#workflow-area {
+.workflow-window {
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
   background-image: url("../img/noisy_grid.png"); }
+  .workflow-window .workflow-area {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0px; }
+  .workflow-window .workflow-properties {
+    position: absolute;
+    right: -250px;
+    top: 0;
+    bottom: 0;
+    width: 250px;
+    background-color: #FFF;
+    display: none;
+    -webkit-box-shadow: 0 0 5px 0 #BBB;
+    -moz-box-shadow: 0 0 5px 0 #BBB;
+    box-shadow: 0 0 5px 0 #BBB; }
+  .workflow-window.show-workflow-properties .workflow-area {
+    right: 250px; }
+  .workflow-window.show-workflow-properties .workflow-properties {
+    display: block;
+    right: 0; }
+
+.properties-form {
+  padding: 15px; }
+
+.properties-form__heading {
+  font-size: 20px;
+  color: #3498DB; }
+
+.properties-form__subheading {
+  font-size: 15px;
+  color: #000; }
+
+.properties-group {
+  padding: 5px 10px;
+  border: 1px dashed #EEE;
+  margin: 10px 0;
+  position: relative;
+  font-size: 12px; }
+  .properties-group .delete-properties-group {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    line-height: 20px;
+    text-align: center;
+    border-radius: 50%;
+    background-color: #E74C3C;
+    color: #FFF;
+    font-size: 10px;
+    opacity: 0; }
+    .properties-group .delete-properties-group i {
+      line-height: 19px; }
+  .properties-group:hover .delete-properties-group {
+    opacity: 0.5; }
+    .properties-group:hover .delete-properties-group:hover, .properties-group:hover .delete-properties-group:active, .properties-group:hover .delete-properties-group:focus {
+      opacity: 1;
+      text-decoration: none; }
+
+.properties-form__field {
+  display: table;
+  padding: 2px 0;
+  width: 100%; }
+  .properties-form__field label {
+    margin: 0px;
+    font-size: 12px;
+    color: #000; }
+  .properties-form__field .properties-label {
+    display: table-cell;
+    width: 25%;
+    vertical-align: middle; }
+  .properties-form__field .properties-input {
+    display: table-cell;
+    width: 75%; }
+
+.add-property {
+  text-decoration: none;
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  line-height: 20px;
+  text-align: center;
+  border-radius: 50%;
+  background-color: #18BC9C;
+  color: #FFF;
+  font-size: 10px;
+  opacity: 0.8; }
+  .add-property i {
+    line-height: 19px; }
+  .add-property:hover, .add-property:active, .add-property:focus {
+    opacity: 1;
+    color: #FFF;
+    text-decoration: none; }
 
 /*# sourceMappingURL=style.css.map */

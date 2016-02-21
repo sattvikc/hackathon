@@ -3,7 +3,8 @@
 function InputPort(options) {
   var self = this;
   self.name = options.name;
-  self.value = options.value;
+  self.src = options.src;
+  self.key = options.key;
   self.svg = options.svg;
   self.viewport = options.viewport;
   self.taskNode = options.taskNode;
@@ -29,13 +30,18 @@ function InputPort(options) {
         d3.event.sourceEvent.stopPropagation();
       })
       .on('dragend', function() {
-        d3.event.sourceEvent.stopPropagation();
+        //d3.event.sourceEvent.stopPropagation();
       });
     return drag;
   }
 
   self.handleDoubleClick = function() {
-    self.task.inputs[self.name] = {'src': '', 'key': ''};
+    for(var i=0; i<self.task.inputs.length; i++) {
+      var input = self.task.inputs[i];
+      if(input.name == self.name) {
+        self.task.inputs[i] = {'name': self.name, 'src': '', 'key': ''};
+      }
+    }
     self.taskObj.render();
     self.viewport.renderConnectors();
   }
@@ -49,7 +55,7 @@ function InputPort(options) {
       .on('mouseover', self.handleMouseOver)
       .on('mouseout', self.handleMouseOut)
       .call(self.handleDragDrop())
-      .on('dblclick', self.handleDoubleClick);
+      .on('click', self.handleDoubleClick);
   }
 
   self.coordinates = function() {
@@ -142,7 +148,6 @@ function OutputPort(options) {
   self.init();
 }
 
-
 function TaskNode(viewport, svg, task) {
   var self = this;
   self.viewport = viewport;
@@ -151,6 +156,21 @@ function TaskNode(viewport, svg, task) {
   self.taskNode = false;
   self.inputPorts = [];
   self.outputPorts = [];
+  self.$propertiesForm = false;
+
+  self.isSelected = function() {
+    return self.task.ui.selected == true;
+  }
+
+  self.select = function() {
+    self.task.ui.selected = true;
+    self.render();
+  }
+
+  self.deselect = function() {
+    self.task.ui.selected = false;
+    self.render();
+  }
 
   self.handleDragDrop = function() {
     var drag = d3.behavior.drag()
@@ -171,12 +191,8 @@ function TaskNode(viewport, svg, task) {
         self.viewport.renderConnectors();
       })
       .on('dragend', function() {
-        for(var i=0; i<self.viewport.taskNodes.length; i++) {
-          self.viewport.taskNodes[i].task.ui.selected = false
-          self.viewport.taskNodes[i].render();
-        }
-        self.task.ui.selected = true;
-        self.render();
+        self.viewport.deselectAllTaskNodes();
+        self.select();
       });
     return drag;
   }
@@ -202,12 +218,15 @@ function TaskNode(viewport, svg, task) {
     if(!('inputs' in task)) {
       return
     }
-    for(var name in task.inputs) {
-      var value = task.inputs[name];
+    for(var i=0; i<task.inputs.length; i++) {
+      var name = task.inputs[i].name
+      var src = task.inputs[i].src;
+      var key = task.inputs[i].key;
       xOffset += task.ui.port_spacing;
       self.inputPorts.push(new InputPort({
         'name': name,
-        'value': value,
+        'src': src,
+        'key': key,
         'svg': self.svg,
         'viewport': self.viewport,
         'taskNode': self.taskNode,
@@ -243,10 +262,67 @@ function TaskNode(viewport, svg, task) {
     }
   }
 
+  self.initPropertiesChangeHandler = function() {
+    self.$propertiesForm = self.viewport.$propertiesContainer.find('form');
+    self.viewport.showWorkflowProperties();
+
+    self.$propertiesForm.find(':input').on('change', function() {
+      var name = $(this).attr('name');
+      if(name.indexOf('inputs') >= 0) {
+        var field = name.split('-')[1];
+        var index = parseInt(name.split('-')[2], 10);
+        self.task.inputs[index][field] = $(this).val();
+      }
+      if(name.indexOf('outputs') >= 0) {
+        var index = parseInt(name.split('-')[1], 10);
+        self.task.outputs[index] = $(this).val();
+      }
+      self.render();
+      self.viewport.renderConnectors();
+    });
+
+    self.$propertiesForm.find('.add-input-properties').on('click', function() {
+      self.task.inputs.push({'name': '', 'src': '', 'key': ''});
+      self.render();
+      self.viewport.renderConnectors();
+      return false;
+    });
+
+    self.$propertiesForm.find('.add-output-properties').on('click', function() {
+      self.task.outputs.push('');
+      self.render();
+      self.viewport.renderConnectors();
+      return false;
+    });
+
+    self.$propertiesForm.find('.delete-properties-group').on('click', function() {
+      var type = $(this).data('type')
+      var index = parseInt($(this).data('index'), 10);
+      if(type == 'inputs') {
+        self.task.inputs.splice(index, 1);
+      }
+      if(type == 'outputs') {
+        self.task.outputs.splice(index, 1);
+      }
+      self.render();
+      self.viewport.renderConnectors();
+      return false;
+    });
+  }
+
+  self.renderProperties = function() {
+    var content = $('#tmpl-task-properties').tmpl({'task': self.task}).html();
+    self.viewport.$propertiesContainer.html(content);
+    self.initPropertiesChangeHandler();
+  }
+
   self.render = function() {
     self.renderTaskNode();
     self.renderInputPorts();
     self.renderOutputPorts();
+    if(self.isSelected()) {
+      self.renderProperties();
+    }
   }
 
   self.init = function() {
@@ -256,12 +332,28 @@ function TaskNode(viewport, svg, task) {
   self.init();
 }
 
-function WorkflowViewPort(identifier, workflow) {
+function WorkflowViewPort(identifier, areaIdentifier, workflow) {
   var self = this;
   self.workflow = workflow;
   self.taskNodes = [];
   self.connectors = [];
   self.connectorPaths = [];
+  self.$workflowWindow = $(identifier);
+  self.$propertiesContainer = $(identifier).find('.workflow-properties');
+
+  self.deselectAllTaskNodes = function() {
+    for(var i=0; i<self.taskNodes.length; i++) {
+      self.taskNodes[i].deselect();
+    }
+  }
+
+  self.showWorkflowProperties = function() {
+    self.$workflowWindow.addClass('show-workflow-properties');
+  }
+
+  self.hideWorkflowProperties = function() {
+    self.$workflowWindow.removeClass('show-workflow-properties');
+  }
 
   self.addTaskItem = function(task) {
     var taskNode = new TaskNode(self, self.svg, task);
@@ -281,17 +373,22 @@ function WorkflowViewPort(identifier, workflow) {
         return taskNode;
       }
     }
+    return false;
   }
 
   self.getOutputPortByKey = function(key) {
     var taskName = key.split('.')[0];
     var portName = key.split('.')[1];
     var taskNode = self.getTaskNodeByName(taskName);
+    if(!taskNode) {
+      return false;
+    }
     for(var i=0; i<taskNode.outputPorts.length; i++) {
       if(portName == taskNode.outputPorts[i].name) {
         return taskNode.outputPorts[i];
       }
     }
+    return false
   }
 
   self.loadConnectors = function() {
@@ -303,9 +400,12 @@ function WorkflowViewPort(identifier, workflow) {
       }
       for(var j=0; j<taskNode.inputPorts.length; j++) {
         var inputPort = taskNode.inputPorts[j];
-        if(inputPort.value.src == 'taskout') {
-          var key = inputPort.value.key;
+        if(inputPort.src == 'taskout') {
+          var key = inputPort.key;
           var outputPort = self.getOutputPortByKey(key);
+          if(!outputPort) {
+            continue;
+          }
           self.connectors.push({
             'inputPort': inputPort,
             'outputPort': outputPort
@@ -389,21 +489,33 @@ function WorkflowViewPort(identifier, workflow) {
   }
 
   self.addConnector = function(outputPort, inputPort) {
-    inputPort.task.inputs[inputPort.name] = {
-      'src': 'taskout',
-      'key': outputPort.task.name + '.' + outputPort.name
+    for(var i=0; i<inputPort.task.inputs.length; i++) {
+      var input = inputPort.task.inputs[i];
+      if(input.name == inputPort.name) {
+        input['src'] = 'taskout';
+        input['key'] = outputPort.task.name + '.' + outputPort.name;
+      }
     }
     inputPort.taskObj.render();
     self.renderConnectors();
   }
 
   self.init = function() {
-    self.svg = d3.select(identifier)
+    self.svg = d3.select(areaIdentifier)
       .append('svg')
       .attr('width', '100%')
       .attr('height', '100%');
     self.addTasks(self.workflow.tasks);
     self.renderConnectors();
+
+    self.$workflowWindow.on('click', function() {
+      self.deselectAllTaskNodes();
+      self.hideWorkflowProperties();
+    });
+
+    self.$propertiesContainer.on('click', function(event) {
+      event.stopPropagation();
+    });
   }
 
   self.init();
