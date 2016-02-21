@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <div class="container" style="margin-top: 80px;">
+    <h3>Workflows Runs</h3>
+    <hr/>
+
+    <table class="table table-bordered table-hover">
+      <tr>
+        <th>Workflow</th>
+        <th>Run ID</th>
+        <th>Start Time</th>
+        <th>State</th>
+        <th></th>
+      </tr>  
+      {% for wfr in workflow_runs %}
+      <tr>
+        <td>{{ wfr.workflow.name }}</td>
+        <td><code>{{ wfr.run_id }}</code></td>
+        <td><samp>{{ wfr.status.workflow.execution.start_time }}</samp></td>
+        <td><span class="badge">{{ wfr.status.workflow.state }}</span></td>
+        <td><a href="{% url 'workflow:monitor' pk=wfr.pk %}" class="btn btn-xs btn-default">Details</a></td>
+      </tr>
+      {% endfor %}
+    </table>
+  </div>
+{% endblock content %}

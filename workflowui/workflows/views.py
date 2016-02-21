@@ -10,6 +10,13 @@ ENDPOINT = 'http://localhost:12120/api/1.0'
 CLIENT = WorkflowClient(ENDPOINT)
 
 
+def wlist(request):
+    wfs = Workflow.objects.all()
+    return render(request, 'workflows/list.html', {
+            'workflows': wfs,
+        })
+
+
 def new(request):
     name = request.POST.get('name')
     desc = request.POST.get('description', '')
@@ -42,6 +49,19 @@ def execute(request, pk):
 def submit(request, pk):
     wf = Workflow.objects.get(pk=pk)
     wf_def = wf.definition
+
+    # Pre process wf_def
+    for task in wf_def['tasks']:
+        inputs = task['inputs']
+        task['inputs'] = {}
+        for inp in inputs:
+            task['inputs'][inp['name']] = inp
+            inp.pop('name')
+
+    wf_def = { 'workflow': wf_def }
+
+    # Pre process complete
+
     properties = {}
     keys = request.POST.getlist('key')
     values = request.POST.getlist('value')
@@ -49,7 +69,7 @@ def submit(request, pk):
     for k, v in zip(keys, values):
         properties.update({k: v})
 
-    result = CLIENT.submit(wf_def, properties)
+    result = CLIENT.workflow_submit(wf_def, properties)
     run_id = result.get('runId')
 
     wf_run = WorkflowRun()
@@ -60,13 +80,20 @@ def submit(request, pk):
     return redirect('workflow:monitor', pk=wf_run.pk)
 
 
+def mlist(request):
+    wfrs = WorkflowRun.objects.all()
+    return render(request, 'workflows/run-list.html', {
+            'workflow_runs': wfrs,
+        })
+
+
 def monitor(request, pk):
     wf_run = WorkflowRun.objects.get(pk=pk)
     if 'workflow' in wf_run.status and 'state' in wf_run.status['workflow'] and (
             wf_run.status['workflow']['state'] == 'COMPLETED'):
         status = wf_run.status
     else:
-        status = CLIENT.status(wf_run.run_id)
+        status = CLIENT.workflow_status(wf_run.run_id)
         wf_run.status = status
         wf_run.save()
     return render(request, 'workflows/monitor.html', {

@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <div class="container" style="margin-top: 80px;">
+    <h3>Workflows</h3>
+    <hr/>
+    {% for wf in workflows %}
+      <div class="panel panel-default">
+        <div class="panel-heading">{{ wf.name }}</div>
+        <div class="panel-body">
+          <samp>
+            {{ wf.description|default:"No description available." }}
+          </samp>
+          <hr/>
+          <a href="" class="btn btn-sm btn-warning">Edit</a>
+          <a href="{% url 'workflow:execute' pk=wf.pk %}" class="btn btn-sm btn-primary">Run</a>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+{% endblock content %}

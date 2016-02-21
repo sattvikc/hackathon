@@ -42,6 +42,7 @@ class RunnerBase(object):
 
 class InlineRunner(RunnerBase):
     def run(self):
+        self.completed = False
         self.logger.info('Starting workflow run.')
         self.monitor.update('workflow.state', 'RUNNING')
         self.monitor.update('workflow.execution.start_time', datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f'))
@@ -101,6 +102,7 @@ class InlineRunner(RunnerBase):
         self.logger.info('Completed workflow run.')
         self.monitor.update('workflow.state', 'COMPLETED')
         self.monitor.update('workflow.execution.end_time', datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f'))
+        self.completed = True
 
     def __str__(self):
         return 'InlineRunner<%s,%s>' % (self.workflow_name, self.run_id)
@@ -110,3 +112,6 @@ class InlineRunner(RunnerBase):
 
     def get_status(self):
         return self.monitor.get()
+
+    def is_complete(self):
+        return self.completed

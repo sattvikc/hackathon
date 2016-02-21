@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block content %}
-  <div class="container">
+  <div class="container" style="margin-top: 80px;">
     <h3>Workflow monitor <small><a href="{{ request.get_full_path}}" class="btn btn-xs btn-primary">refresh</a></small></h3>
     <hr/>
     <div class="col-md-6">
@@ -78,6 +78,8 @@
                       </div>
                     </td>
                   </tr>
+                {% empty %}
+                  <tr><td><samp>No Inputs for this task.</samp></td></tr>
                 {% endfor %}
               </tbody>
             </table>
@@ -97,6 +99,8 @@
                       </div>
                     </td>
                   </tr>
+                {% empty %}
+                  <tr><td><samp>No Outputs for this task.</samp></td></tr>
                 {% endfor %}
               </tbody>
             </table>

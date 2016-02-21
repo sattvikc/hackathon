@@ -16,7 +16,7 @@ class WorkflowClient(object):
     def __init__(self, endpoint):
         self.endpoint = endpoint
 
-    def submit(self, workflow, properties={}):
+    def workflow_submit(self, workflow, properties={}):
         workflow = json.dumps(workflow)
         properties = json.dumps(properties)
 
@@ -27,7 +27,17 @@ class WorkflowClient(object):
         })
         return json.loads(result.content.decode('utf-8'))
 
-    def status(self, run_id):
+    def workflow_status(self, run_id):
         url = self.endpoint + '/workflow/status/' + run_id
+        result = requests.get(url)
+        return json.loads(result.content.decode('utf-8'))
+
+    def server_task_types(self):
+        url = self.endpoint + '/server/task-types'
+        result = requests.get(url)
+        return json.loads(result.content.decode('utf-8'))
+
+    def server_task_type_meta(self, key):
+        url = self.endpoint + '/server/task-type-meta/' + key
         result = requests.get(url)
         return json.loads(result.content.decode('utf-8'))

@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block content %}
-  <div class="container">
+  <div class="container" style="margin-top: 80px;">
     <h3>Workflow Execution</h3>
     <hr/>
 
@@ -25,8 +25,8 @@
     <div style="clear: both;"></div>
     <form method="post" action="{% url 'workflow:submit' pk=workflow.pk %}">
       {% csrf_token %}
-      <h5>Properties</h5>
-      <table class="table table-bordered">
+      <h4>Properties</h4>
+      <table class="table table-bordered table-hover">
         <tbody id="key-value-list">
           <tr>
             <th>Key</th>
