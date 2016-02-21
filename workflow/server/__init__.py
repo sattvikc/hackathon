@@ -1,18 +1,18 @@
-import logging
-from threading import Thread
-from queue import Queue
-
 from ..engine.runner import InlineRunner
 from .scheduler import Scheduler
 from ..engine.compiler import Compiler
 
+from threading import Thread
+from queue import Queue
+
+import logging
 import uuid
 
 
 class WorkflowServer(Thread):
     def __init__(self):
         super(WorkflowServer, self).__init__(name='WorkflowServer')
-        self.logger = logging.getLogger('workflow.Server')
+        self.logger = logging.getLogger(__name__)
         self.cmd_queue = Queue()
         self.instances = []
         self.instances_dict = {}
@@ -25,12 +25,12 @@ class WorkflowServer(Thread):
 
     def submit_exec(self, workflow, properties, run_id):
         workflow_instance = Compiler.compile(definition=workflow, properties=properties)
-        instance = InlineRunner(server=self, workflow_instance=workflow_instance, run_id=run_id)
-        instance.prepare()
-        instance.validate()
-        instance.start()
-        self.instances.append(instance)
-        self.instances_dict.update({instance.get_run_id(): instance})
+        run_instance = InlineRunner(server=self, workflow_instance=workflow_instance, run_id=run_id)
+        run_instance.prepare()
+        run_instance.validate()
+        self.instances.append(run_instance)
+        self.instances_dict.update({run_id: run_instance})
+        run_instance.run()
 
     def get_status(self, run_id):
         inst = self.instances_dict.get(run_id)

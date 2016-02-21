@@ -73,8 +73,7 @@ def run_workflow(wf_def, properties={}):
     instance = InlineRunner(server=None, workflow_instance=workflow_instance)
     instance.prepare()
     instance.validate()
-    instance.start()
-    instance.join()
+    instance.run()
     return workflow_instance
 
 

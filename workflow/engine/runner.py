@@ -1,23 +1,22 @@
-import copy
+from .monitor import Monitor
+from .run.context import Context
+
+from datetime import datetime
+
 import logging
 import uuid
 
-from threading import Thread
 
-from .compiler import Compiler
-from .run.context import Context
-
-
-class RunnerBase(Thread):
-    def __init__(self, server, workflow_instance, run_id):
+class RunnerBase(object):
+    def __init__(self, server, workflow_instance, run_id=str(uuid.uuid4())):
+        super(RunnerBase, self).__init__()
         self.server = server
-        super(RunnerBase, self).__init__(name='Runner[%s]' % str(uuid.uuid4()))
-
         self.context = Context()
+
         self.instance = None
         self.logger = logging.getLogger('engine.%s' % self.__class__.__name__)
+        self.monitor = Monitor()
         self.run_id = run_id
-        self.status = {}
         self.workflow_instance = workflow_instance
         self.workflow_name = workflow_instance.name
 
@@ -30,13 +29,12 @@ class RunnerBase(Thread):
         self.context.set('run.id', self.run_id)
 
     def prepare(self):
-        self.status.update({'state': 'PREPARING'})
+        self.monitor.update('workflow.state', 'PREPARING')
         self.workflow_instance.set_context(self.context)
         self.workflow_instance.prepare_inputs(self)
-        self.status.update({'state': 'PREPARED'})
-        self.status.update({'tasks': {}})
+        self.monitor.update('workflow.state', 'PREPARED')
         for task in self.workflow_instance.tasks:
-            self.status['tasks'].setdefault(task.name, {}).update({'state': 'NOTREADY'})
+            self.monitor.update('tasks.' + task.name + '.state', 'NOTREADY')
 
     def validate(self):
         pass
@@ -45,7 +43,8 @@ class RunnerBase(Thread):
 class InlineRunner(RunnerBase):
     def run(self):
         self.logger.info('Starting workflow run.')
-        self.status.update({'state': 'RUNNING'})
+        self.monitor.update('workflow.state', 'RUNNING')
+        self.monitor.update('workflow.execution.start_time', datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f'))
         task_queue = []
         ready_queue = []
         success_queue = []
@@ -60,24 +59,24 @@ class InlineRunner(RunnerBase):
                 if task.is_ready():
                     task_queue.remove(task)
                     ready_queue.append(task)
-                    self.status['tasks'].setdefault(task.name, {}).update({'state': 'READY'})
+                    self.monitor.update('tasks.' + task.name + '.state', 'READY')
 
             # Execute the ready queue
             for task in ready_queue:
                 task.resolve_inputs()
                 for i in range(3):
                     self.logger.info('Task [%s] execution started (Attempt %d).' % (task.name, i+1))
-                    self.status['tasks'].setdefault(task.name, {}).update({'inputs': task.inputs})
-                    self.status['tasks'].setdefault(task.name, {}).update({'state': 'RUNNING'})
+                    self.monitor.update('tasks.' + task.name + '.state', 'RUNNING')
+                    self.monitor.update('tasks.' + task.name + '.input.values', task.inputs)
                     task.run()
                     if task.is_successful():
                         self.logger.info('Task [%s] execution completed successfully.' % task.name)
-                        self.status['tasks'].setdefault(task.name, {}).update({'outputs': task.outputs})
-                        self.status['tasks'].setdefault(task.name, {}).update({'state': 'SUCCESSFUL'})
+                        self.monitor.update('tasks.' + task.name + '.state', 'SUCCESSFUL')
+                        self.monitor.update('tasks.' + task.name + '.output.values', task.outputs)
                         break
                     else:
                         self.logger.info('Task [%s] execution failed.' % task.name)
-                        self.status['tasks'].setdefault(task.name, {}).update({'state': 'FAILURE'})
+                        self.monitor.update('tasks.' + task.name + '.state', 'FAILURE')
 
             if len(ready_queue) == 0:
                 # Deadlock or no more executable tasks
@@ -85,7 +84,7 @@ class InlineRunner(RunnerBase):
                 for task in task_queue:
                     task.status = 'SKIPPED'
                     self.logger.warn('Task [%s] execution was skipped.' % task.name)
-                    self.status['tasks'].setdefault(task.name, {}).update({'state': 'SKIPPED'})
+                    self.monitor.update('tasks.' + task.name + '.state', 'SKIPPED')
                     skipped_queue.append(task)
                 task_queue.clear()
                 break
@@ -100,7 +99,8 @@ class InlineRunner(RunnerBase):
         if len(skipped_queue) == 0 and len(failure_queue) == 0:
             self.logger.info('All tasks executed successfully!')
         self.logger.info('Completed workflow run.')
-        self.status.update({'state': 'COMPLETE'})
+        self.monitor.update('workflow.state', 'COMPLETED')
+        self.monitor.update('workflow.execution.end_time', datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f'))
 
     def __str__(self):
         return 'InlineRunner<%s,%s>' % (self.workflow_name, self.run_id)
@@ -109,4 +109,4 @@ class InlineRunner(RunnerBase):
         return 'InlineRunner<%s,%s>' % (self.workflow_name, self.run_id)
 
     def get_status(self):
-        return copy.deepcopy(self.status)
+        return self.monitor.get()
