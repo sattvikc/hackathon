@@ -707,6 +707,8 @@ function WorkflowViewPort(identifier, areaIdentifier, workflow) {
       self.workflow.name = $(this).find('[name=name]').val();
       self.workflow.description = $(this).find('[name=description]').val();
       $('#modal-edit-workflow').modal('hide');
+      $('#workflow-name').text(self.workflow.name);
+      $('#workflow-description').text(self.workflow.description);
       return false;
     });
 
