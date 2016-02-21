@@ -7,6 +7,21 @@ import uuid
 
 class RemoteScriptExecTask(Task):
     ID = 'builtin.remote.exec.command'
+    NAME = 'RemoteScriptExec'
+    DESCRIPTION = 'Execute a script on remote machine.'
+    INPUTS = [
+        ('username', 'Login username'),
+        ('password', 'Login password'),
+        ('host', 'Remote SSH Hostname'),
+        ('port', 'Remote SSH Port, default=22'),
+        ('script', 'Script to be executed'),
+        ('workDir', 'Directory where the script would be created.'),
+    ]
+    OUTPUTS = [
+        ('stdout', 'Output stream'),
+        ('stderr', 'Error stream'),
+        ('exit_status', 'Exit status'),
+    ]
 
     def run(self):
         script = self.get_input('script')

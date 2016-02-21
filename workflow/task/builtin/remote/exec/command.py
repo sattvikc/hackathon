@@ -4,6 +4,20 @@ from ..utils import create_ssh_client
 
 class RemoteCommandExecTask(Task):
     ID = 'builtin.remote.exec.command'
+    NAME = 'RemoteCommandExec'
+    DESCRIPTION = 'Execute a command on remote machine.'
+    INPUTS = [
+        ('username', 'Login username'),
+        ('password', 'Login password'),
+        ('host', 'Remote SSH Hostname'),
+        ('port', 'Remote SSH Port, default=22'),
+        ('command', 'Command to be executed'),
+    ]
+    OUTPUTS = [
+        ('stdout', 'Output stream'),
+        ('stderr', 'Error stream'),
+        ('exit_status', 'Exit status'),
+    ]
 
     def run(self):
         command = self.get_input('command')

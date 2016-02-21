@@ -637,7 +637,7 @@ function WorkflowViewPort(identifier, areaIdentifier, workflow) {
         task.inputs.push({name: meta.inputs[i][0], src:'', key:''});
       }
       for(var i=0; i<meta.outputs.length; i++) {
-        task.outputs.push({name: meta.outputs[i][0], src:'', key:''});
+        task.outputs.push(meta.outputs[i][0]);
       }
       self.addTaskItem(task);
       self.workflow.tasks.push(task);
