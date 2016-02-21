@@ -52,7 +52,8 @@
 .task-node-dependency-connector {
   fill: none;
   stroke: #2C3E50;
-  stroke-width: 2px; }
+  stroke-width: 2px;
+  stroke-dasharray: 3, 3; }
 
 body {
   position: relative;
