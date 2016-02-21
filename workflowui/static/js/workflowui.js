@@ -1,5 +1,23 @@
 'use strict';
 
+function getEmptyTask(svg) {
+  return {
+    "inputs": [],
+    "outputs": [],
+    "dependencies": [],
+    "ui": {
+      "x": 10,
+      "y": 10,
+      "width": 250,
+      "height": 80,
+      "selected": false,
+      "port_radius": 4,
+      "port_hover_radius": 6,
+      "port_spacing": 20
+    }
+  };
+}
+
 function InputPort(options) {
   var self = this;
   self.name = options.name;
@@ -515,6 +533,30 @@ function WorkflowViewPort(identifier, areaIdentifier, workflow) {
 
     self.$propertiesContainer.on('click', function(event) {
       event.stopPropagation();
+    });
+
+    $(document).on('click', '.add-task-button', function(event) {
+      event.stopPropagation();
+      $('#modal-new-task').modal('show');
+      return false;
+    });
+
+    $(document).on('submit', '.add-new-task', function() {
+      var fields = $(this).serializeArray();
+      var task = getEmptyTask();
+      for(var i=0; i<fields.length; i++) {
+        var field = fields[i];
+        task[field.name] = field.value;
+      }
+      self.addTaskItem(task);
+      self.workflow.tasks.push(task);
+      $('#modal-new-task').modal('hide');
+      $(this).find(':input').each(function() {
+        if($(this).attr('type') != 'submit') {
+          $(this).val('');
+        }
+      });
+      return false;
     });
   }
 

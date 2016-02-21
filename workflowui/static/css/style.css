@@ -50,6 +50,9 @@ body {
   position: relative;
   height: 100vh; }
 
+.modal-dialog {
+  z-index: 100000; }
+
 .workflow-window {
   position: absolute;
   top: 0;
@@ -80,8 +83,29 @@ body {
     display: block;
     right: 0; }
 
+.add-task-button {
+  display: inline-block;
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  width: 50px;
+  height: 50px;
+  padding: 15px;
+  line-height: 15px;
+  text-align: center;
+  background-color: #18BC9C;
+  color: #FFF;
+  border-radius: 50%;
+  opacity: 0.8; }
+  .add-task-button:hover, .add-task-button:active, .add-task-button:focus {
+    opacity: 1;
+    color: #FFF;
+    text-decoration: none; }
+
 .properties-form {
   padding: 15px; }
+  .properties-form.properties-form--large label {
+    font-size: 14px; }
 
 .properties-form__heading {
   font-size: 20px;
