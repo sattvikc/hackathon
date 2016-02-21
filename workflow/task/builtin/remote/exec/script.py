@@ -6,7 +6,7 @@ import uuid
 
 
 class RemoteScriptExecTask(Task):
-    ID = 'builtin.remote.exec.command'
+    ID = 'builtin.remote.exec.script'
     NAME = 'RemoteScriptExec'
     DESCRIPTION = 'Execute a script on remote machine.'
     INPUTS = [
