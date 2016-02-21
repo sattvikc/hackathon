@@ -1,4 +1,6 @@
 import workflow.task.builtin.registry
+import workflow.task.builtinfortest
+
 from workflow.engine.compiler import Compiler
 from workflow.engine.runner import InlineRunner
 
