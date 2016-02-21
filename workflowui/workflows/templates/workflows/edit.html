@@ -12,12 +12,20 @@
 {% block content %}
   <div id="workflow-window" class="workflow-window">
     <div class="workflow-area" id="workflow-area">
-      <a class="add-task-button" href="#">
+      <a class="add-task-button" href="#" data-toggle="tooltip" data-placement="left" title="" data-original-title="Add a new task" data-container="body" data-trigger="hover">
         <i class="ti-plus"></i>
       </a>
-      <a href="#" class="save-workflow-button btn btn-success">
-        Save Workflow
-      </a>
+      <div class="workflow-buttons">
+        <a href="#" class="btn btn-warning btn-sm" data-target="#modal-edit-workflow" data-toggle="modal">
+          Edit
+        </a>
+        <a href="#" class="save-workflow-button btn btn-success btn-sm">
+          Save
+        </a>
+        <a href="{% url 'workflow:execute' pk=workflow.pk %}" class="btn btn-primary btn btn-sm">
+          Run
+        </a>
+      </div>
     </div>
     <div class="workflow-properties" id="workflow-properties"></div>
   </div>
@@ -27,7 +35,7 @@
     <input name="description" type="hidden" />
     <input name="workflow" type="hidden" />
   </form>
-  <div id="modal-new-task" class="modal fade bs-example-modal-sm">
+  <div id="modal-new-task" class="modal fade">
     <div class="modal-dialog">
       <form class="properties-form properties-form--large add-new-task">
         <div class="modal-content">
@@ -64,6 +72,39 @@
       </form>
     </div>
   </div>
+  <div id="modal-edit-workflow" class="modal fade">
+    <div class="modal-dialog">
+      <form class="properties-form properties-form--large edit-workflow">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h4 class="modal-title">Edit Workflow</h4>
+          </div>
+          <div class="modal-body">
+            <div class="properties-form__field">
+              <div class="properties-label">
+                <label>Name</label>
+              </div>
+              <div class="properties-input">
+                <input name="name" class="form-control input-sm" type="text" value="{{ workflow.name }}" />
+              </div>
+            </div>
+            <div class="properties-form__field">
+              <div class="properties-label">
+                <label>Description</label>
+              </div>
+              <div class="properties-input">
+                <textarea name="description" class="form-control input-sm">{{ workflow.description }}</textarea>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <input type="submit" class="btn btn-success" value="Edit Workflow" />
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
   <script type="text/template" id="tmpl-task-node">
     {% verbatim %}
       <div>
@@ -89,14 +130,14 @@
           <div class="properties-form__subheading">
             Inputs
             <span class="pull-right">
-              <a class="add-property add-input-properties" href="#">
+              <a class="add-property add-input-properties" href="#" data-toggle="tooltip" data-placement="left" title="" data-original-title="Add a new input" data-container="body" data-trigger="hover">
                 <i class="ti-plus"></i>
               </a>
             </span>
           </div>
           {{each(index, value) task.inputs}}
             <div class="properties-group">
-              <a class="delete-properties-group" href="#" data-type="inputs" data-index="${index}">
+              <a class="delete-properties-group" href="#" data-type="inputs" data-index="${index}" data-toggle="tooltip" data-placement="left" title="" data-original-title="Delete input" data-container="body" data-trigger="hover">
                 <i class="ti-close"></i>
               </a>
               <div class="properties-form__field">
@@ -138,14 +179,14 @@
           <div class="properties-form__subheading">
             Outputs
             <span class="pull-right">
-              <a class="add-property add-output-properties" href="#">
+              <a class="add-property add-output-properties" href="#" data-toggle="tooltip" data-placement="left" title="" data-original-title="Add a new output" data-container="body" data-trigger="hover">
                 <i class="ti-plus"></i>
               </a>
             </span>
           </div>
           {{each(index, value) task.outputs}}
             <div class="properties-group">
-              <a class="delete-properties-group" href="#" data-type="outputs" data-index="${index}">
+              <a class="delete-properties-group" href="#" data-type="outputs" data-index="${index}" data-toggle="tooltip" data-placement="left" title="" data-original-title="Delete output" data-container="body" data-trigger="hover">
                 <i class="ti-close"></i>
               </a>
               <div class="properties-form__field">
@@ -166,14 +207,14 @@
           <div class="properties-form__subheading">
             Dependencies
             <span class="pull-right">
-              <a class="add-property add-dependency-properties" href="#">
+              <a class="add-property add-dependency-properties" href="#" data-toggle="tooltip" data-placement="left" title="" data-original-title="Add a new dependency" data-container="body" data-trigger="hover">
                 <i class="ti-plus"></i>
               </a>
             </span>
           </div>
           {{each(index, value) task.dependencies}}
             <div class="properties-group">
-              <a class="delete-properties-group" href="#" data-type="dependencies" data-index="${index}">
+              <a class="delete-properties-group" href="#" data-type="dependencies" data-index="${index}" data-toggle="tooltip" data-placement="left" title="" data-original-title="Delete dependency" data-container="body" data-trigger="hover">
                 <i class="ti-close"></i>
               </a>
               <div class="properties-form__field">

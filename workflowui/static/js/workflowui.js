@@ -70,6 +70,10 @@ function InputPort(options) {
       .attr('cx', self.xOffset)
       .attr('cy', self.yOffset)
       .attr('r', self.task.ui.port_radius)
+      .attr('data-toggle', 'tooltip')
+      .attr('data-title', self.name)
+      .attr('data-container', 'body')
+      .attr('data-placement', 'top')
       .on('mouseover', self.handleMouseOver)
       .on('mouseout', self.handleMouseOut)
       .call(self.handleDragDrop())
@@ -153,6 +157,10 @@ function OutputPort(options) {
       .attr('cx', self.xOffset)
       .attr('cy', self.yOffset)
       .attr('r', self.task.ui.port_radius)
+      .attr('data-toggle', 'tooltip')
+      .attr('data-title', self.name)
+      .attr('data-container', 'body')
+      .attr('data-placement', 'bottom')
       .call(self.handleDragDrop())
       .on('mouseover', self.handleMouseOver)
       .on('mouseout', self.handleMouseOut);
@@ -183,6 +191,7 @@ function TaskNode(viewport, svg, task) {
   }
 
   self.select = function() {
+    self.viewport.deselectAllTaskNodes();
     self.task.ui.selected = true;
     self.render();
   }
@@ -370,12 +379,14 @@ function TaskNode(viewport, svg, task) {
   }
 
   self.render = function() {
+    self.viewport.destroyTooltips();
     self.renderTaskNode();
     self.renderInputPorts();
     self.renderOutputPorts();
     if(self.isSelected()) {
       self.renderProperties();
     }
+    self.viewport.initTooltips();
   }
 
   self.init = function() {
@@ -413,6 +424,7 @@ function WorkflowViewPort(identifier, areaIdentifier, workflow) {
   self.addTaskItem = function(task) {
     var taskNode = new TaskNode(self, self.svg, task);
     self.taskNodes.push(taskNode);
+    return taskNode;
   }
 
   self.deleteTaskNode = function(name) {
@@ -606,6 +618,14 @@ function WorkflowViewPort(identifier, areaIdentifier, workflow) {
     self.renderConnectors();
   }
 
+  self.destroyTooltips = function() {
+    $('[data-toggle=tooltip').tooltip('destroy');
+  }
+
+  self.initTooltips = function() {
+    $('[data-toggle=tooltip').tooltip();
+  }
+
   self.init = function() {
     self.svg = d3.select(areaIdentifier)
       .append('svg')
@@ -640,6 +660,8 @@ function WorkflowViewPort(identifier, areaIdentifier, workflow) {
         task.outputs.push(meta.outputs[i][0]);
       }
       self.addTaskItem(task);
+      var taskNode = self.addTaskItem(task);
+      taskNode.select();
       self.workflow.tasks.push(task);
       $('#modal-new-task').modal('hide');
       $(this).find(':input').each(function() {
@@ -650,10 +672,17 @@ function WorkflowViewPort(identifier, areaIdentifier, workflow) {
       return false;
     });
 
+    $(document).on('submit', '.edit-workflow', function() {
+      self.workflow.name = $(this).find('[name=name]').val();
+      self.workflow.description = $(this).find('[name=description]').val();
+      $('#modal-edit-workflow').modal('hide');
+      return false;
+    });
+
     $(document).on('click', '.save-workflow-button', function() {
       var $form = $('#workflow-form');
       $form.find('input[name=name]').val(self.workflow.name);
-      $form.find('input[name=description]').val('');
+      $form.find('input[name=description]').val(self.workflow.description);
       $form.find('input[name=workflow]').val(JSON.stringify(self.workflow));
       $form.submit();
     });
@@ -661,6 +690,8 @@ function WorkflowViewPort(identifier, areaIdentifier, workflow) {
     self.$propertiesContainer.on('click', function(event) {
       event.stopPropagation();
     });
+
+    self.initTooltips();
   }
 
   self.init();

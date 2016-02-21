@@ -36,6 +36,7 @@ body {
     background-color: #FFF;
     display: none;
     @include box-shadow(0 0 5px 0 #BBB);
+    overflow-y: auto;
   }
 
   &.show-workflow-properties {
@@ -70,15 +71,11 @@ body {
   }
 }
 
-.save-workflow-button {
+.workflow-buttons {
   display: inline-block;
   position: absolute;
   bottom: 20px;
   right: 20px;
-  opacity: 0.8;
-  &:hover, &:active, &:focus {
-    opacity: 1;
-  } 
 }
 
 .properties-form {

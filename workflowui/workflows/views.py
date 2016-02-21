@@ -27,7 +27,7 @@ def new(request):
     wf = Workflow()
     wf.name = 'Untitled'
     wf.description = ''
-    wf.definition = {'name': 'Untitled', 'tasks': []}
+    wf.definition = {'name': 'Untitled', 'description': '', 'tasks': []}
     wf.save()
     # TODO: Redirect to edit
 

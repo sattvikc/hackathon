@@ -81,7 +81,8 @@ body {
     display: none;
     -webkit-box-shadow: 0 0 5px 0 #BBB;
     -moz-box-shadow: 0 0 5px 0 #BBB;
-    box-shadow: 0 0 5px 0 #BBB; }
+    box-shadow: 0 0 5px 0 #BBB;
+    overflow-y: auto; }
   .workflow-window.show-workflow-properties .workflow-area {
     right: 350px; }
   .workflow-window.show-workflow-properties .workflow-properties {
@@ -107,14 +108,11 @@ body {
     color: #FFF;
     text-decoration: none; }
 
-.save-workflow-button {
+.workflow-buttons {
   display: inline-block;
   position: absolute;
   bottom: 20px;
-  right: 20px;
-  opacity: 0.8; }
-  .save-workflow-button:hover, .save-workflow-button:active, .save-workflow-button:focus {
-    opacity: 1; }
+  right: 20px; }
 
 .properties-form {
   padding: 15px; }
