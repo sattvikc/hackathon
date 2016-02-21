@@ -78,6 +78,27 @@ body {
   right: 20px;
 }
 
+.workflow-info {
+  display: inline-block;
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  opacity: 0.6;
+
+  &:hover {
+    opacity: 1;
+  }
+
+  .name {
+    font-size: 28px;
+    color: #000;
+  }
+  .description {
+    font-size: 14px;
+    color: #999;
+  }
+}
+
 .properties-form {
   padding: 15px;
 

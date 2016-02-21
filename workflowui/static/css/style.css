@@ -52,7 +52,8 @@
 .task-node-dependency-connector {
   fill: none;
   stroke: #2C3E50;
-  stroke-width: 2px; }
+  stroke-width: 2px;
+  stroke-dasharray: 3, 3; }
 
 body {
   position: relative;
@@ -116,6 +117,21 @@ body {
   position: absolute;
   bottom: 20px;
   right: 20px; }
+
+.workflow-info {
+  display: inline-block;
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  opacity: 0.6; }
+  .workflow-info:hover {
+    opacity: 1; }
+  .workflow-info .name {
+    font-size: 28px;
+    color: #000; }
+  .workflow-info .description {
+    font-size: 14px;
+    color: #999; }
 
 .properties-form {
   padding: 15px; }
