@@ -32,10 +32,22 @@ def save(request, pk):
     wf.save()
 
 
+def execute(request, pk):
+    wf = Workflow.objects.get(pk=pk)
+    return render(request, 'workflows/execute.html', {
+            'workflow': wf,
+        })
+
+
 def submit(request, pk):
     wf = Workflow.objects.get(pk=pk)
     wf_def = wf.definition
-    properties = request.POST.get('properties', {})
+    properties = {}
+    keys = request.POST.getlist('key')
+    values = request.POST.getlist('value')
+
+    for k, v in zip(keys, values):
+        properties.update({k: v})
 
     result = CLIENT.submit(wf_def, properties)
     run_id = result.get('runId')
@@ -50,12 +62,13 @@ def submit(request, pk):
 
 def monitor(request, pk):
     wf_run = WorkflowRun.objects.get(pk=pk)
-    if not wf_run.status['workflow']['state'] == 'COMPLETED':
+    if 'workflow' in wf_run.status and 'state' in wf_run.status['workflow'] and (
+            wf_run.status['workflow']['state'] == 'COMPLETED'):
+        status = wf_run.status
+    else:
         status = CLIENT.status(wf_run.run_id)
         wf_run.status = status
         wf_run.save()
-    else:
-        status = wf_run.status
     return render(request, 'workflows/monitor.html', {
             'workflow': wf_run.workflow,
             'run_id': wf_run.run_id,

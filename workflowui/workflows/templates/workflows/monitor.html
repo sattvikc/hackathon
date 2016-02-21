@@ -4,7 +4,7 @@
   <div class="container">
     <h3>Workflow monitor <small><a href="{{ request.get_full_path}}" class="btn btn-xs btn-primary">refresh</a></small></h3>
     <hr/>
-    <div class="col-md-4">
+    <div class="col-md-6">
       <table class="table table-bordered">
       <tbody>
         <tr>
@@ -13,11 +13,11 @@
         </tr>
         <tr>
           <th>Run ID</th>
-          <td>{{ run_id }}</td>
+          <td><code>{{ run_id }}</code></td>
         </tr>
         <tr>
           <th>State</th>
-          <td>{{ status.workflow.state }}</td>
+          <td><span class="badge">{{ status.workflow.state }}</span></td>
         </tr>
         <tr>
           <th>Start time</th>
@@ -72,7 +72,11 @@
                 {% for k, v in tdata.input.values.items  %}
                   <tr>
                     <th style="width: 150px;">{{ k }}</th>
-                    <td><samp>{{ v }}</samp></td>
+                    <td>
+                      <div style="overflow-x: auto; font-size: 0.8em; max-height: 300px; width: 525px;">
+                        <samp style="white-space: pre;">{{ v }}</samp>
+                      </div>
+                    </td>
                   </tr>
                 {% endfor %}
               </tbody>
@@ -87,7 +91,11 @@
                 {% for k, v in tdata.output.values.items  %}
                   <tr>
                     <th style="width: 150px;">{{ k }}</th>
-                    <td><samp>{{ v }}</samp></td>
+                    <td>
+                      <div style="overflow-x: auto; font-size: 0.8em; max-height: 300px; width: 525px;">
+                        <samp style="white-space: pre;">{{ v }}</samp>
+                      </div>
+                    </td>
                   </tr>
                 {% endfor %}
               </tbody>

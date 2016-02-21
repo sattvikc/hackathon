@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+  <div class="container">
+    <h3>Workflow Execution</h3>
+    <hr/>
+
+    <div class="col-md-8">
+      <table class="table table-bordered">
+      <tbody>
+        <tr>
+          <th>Workflow</th>
+          <td>{{ workflow.name }}</td>
+        </tr>
+        <tr>
+          <th>Definition</th>
+          <td>
+            <code>{{ workflow.definition }}</code>
+          </td>
+        </tr>
+      </tbody>
+      </table>
+    </div>
+    <div style="clear: both;"></div>
+    <form method="post" action="{% url 'workflow:submit' pk=workflow.pk %}">
+      {% csrf_token %}
+      <h5>Properties</h5>
+      <table class="table table-bordered">
+        <tbody id="key-value-list">
+          <tr>
+            <th>Key</th>
+            <th>Value</th>
+            <th></th>
+          </tr>
+          <tr>
+            <td><input type="text" name="key" class="form-control"></input></td>
+            <td><input type="text" name="value" class="form-control"></input></td>
+            <td><a href="#" class="btn btn-sm btn-danger" onclick="$(this).parent().parent().remove();">remove</a></td>
+          </tr>
+        </tbody>
+      </table>
+      <a href="#" class="btn btn-sm btn-success" onclick="add_row();">Add</a>
+      <hr/>
+      <button type="submit" class="btn btn-sm btn-primary">Submit</button>
+    </form>
+  </div>
+{% endblock content %}
+
+{% block extra-head %}
+  <script type="text/javascript">
+  var add_row = function() {
+    var row = $('<tr>' +
+                '<td><input type="text" name="key" class="form-control"></input></td>' +
+                '<td><input type="text" name="value" class="form-control"></input></td>' +
+                '<td><a href="#" class="btn btn-sm btn-danger" onclick="$(this).parent().parent().remove();">remove</a></td>' +
+              '</tr>');
+    $('#key-value-list').append(row);
+  }
+  $(function() {
+  });
+  </script>
+{% endblock extra-head %}
