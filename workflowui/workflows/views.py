@@ -29,7 +29,7 @@ def new(request):
     wf.description = ''
     wf.definition = {'name': 'Untitled', 'description': '', 'tasks': []}
     wf.save()
-    # TODO: Redirect to edit
+    return redirect('workflow:edit', pk=wf.pk)
 
 
 def edit(request, pk):
