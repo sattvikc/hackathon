@@ -4,6 +4,7 @@ from workflow.server.endpoints.api_v_1_0 import api_v10_app
 from workflow.server import WorkflowServer
 
 import workflow.task.builtin.registry
+import workflow.task.builtinfortest
 
 import logging
 

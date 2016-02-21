@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <div class="container">
+    <h3>Workflow monitor <small><a href="{{ request.get_full_path}}" class="btn btn-xs btn-primary">refresh</a></small></h3>
+    <hr/>
+    <div class="col-md-4">
+      <table class="table table-bordered">
+      <tbody>
+        <tr>
+          <th>Workflow</th>
+          <td>{{ workflow.name }}</td>
+        </tr>
+        <tr>
+          <th>Run ID</th>
+          <td>{{ run_id }}</td>
+        </tr>
+        <tr>
+          <th>State</th>
+          <td>{{ status.workflow.state }}</td>
+        </tr>
+        <tr>
+          <th>Start time</th>
+          <td>{{ status.workflow.execution.start_time }}</td>
+        </tr>
+        <tr>
+          <th>End time</th>
+          <td>{{ status.workflow.execution.end_time }}</td>
+        </tr>
+      </tbody>
+      </table>
+    </div>
+
+    <div style="clear: both;"></div>
+
+    <h4>Tasks</h4>
+    <hr/>
+
+    {% for tname, tdata in status.tasks.items  %}
+      <div class="col-md-4">
+        <table class="table table-bordered">
+          <tbody>
+            <tr>
+              <th>Task</th>
+              <td>{{ tname }}</td>
+            </tr>
+            <tr>
+              <th>State</th>
+              <td>
+                {% if tdata.state == 'SUCCESSFUL' %}
+                  <span class="label label-success">{{ tdata.state }}</span>
+                {% elif tdata.state == 'FAILURE' %}
+                  <span class="label label-danger">{{ tdata.state }}</span>
+                {% elif tdata.state == 'SKIPPED' %}
+                  <span class="label label-warning">{{ tdata.state }}</span>
+                {% elif tdata.state == 'RUNNING' %}
+                  <span class="label label-primary">{{ tdata.state }}</span>
+                {% else %}
+                  <span class="label label-default">{{ tdata.state }}</span>
+                {% endif %}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="col-md-8">
+        <div class="panel panel-default">
+          <div class="panel-heading">Inputs</div>
+          <div class="panel-body">
+            <table class="table table-bordered">
+              <tbody>
+                {% for k, v in tdata.input.values.items  %}
+                  <tr>
+                    <th style="width: 150px;">{{ k }}</th>
+                    <td><samp>{{ v }}</samp></td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="panel panel-default">
+          <div class="panel-heading">Outputs</div>
+          <div class="panel-body">
+            <table class="table table-bordered">
+              <tbody>
+                {% for k, v in tdata.output.values.items  %}
+                  <tr>
+                    <th style="width: 150px;">{{ k }}</th>
+                    <td><samp>{{ v }}</samp></td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div style="clear: both;"></div>
+    {% endfor %}
+  </div>
+{% endblock content %}
