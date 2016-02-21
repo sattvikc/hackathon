@@ -43,7 +43,7 @@ WORKFLOW2 = yaml.load("""workflow:
 """)
 
 WORKFLOW3 = yaml.load("""workflow:
-  name: "SampleWorkflow2"
+  name: "SampleWorkflow3"
   tasks:
     - name: task01
       def: "builtin.utility.pycode"
