@@ -41,7 +41,6 @@ class WorkflowServer(Thread):
 
     def finish(self):
         self.cmd_queue.put(('finish', None))
-        self.join()
 
     def init(self):
         pass
@@ -59,7 +58,5 @@ class WorkflowServer(Thread):
                 self.submit_exec(workflow, properties, run_id)
 
         self.logger.info('Waiting for instances to complete...')
-        for instance in self.instances:
-            instance.join()
 
         self.logger.info('Server execution completed.')
