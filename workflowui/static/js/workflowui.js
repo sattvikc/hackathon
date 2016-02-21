@@ -125,11 +125,13 @@ function OutputPort(options) {
         if(response.found) {
           self.tempConnector = self.viewport.renderPath(
             self.coordinates(), response.inputPort.coordinates(), self.index);
+          self.tempConnector.attr('class', 'task-node-port-connector');
           self.tempInputPort = response.inputPort;
         }
         else {
           self.tempConnector = self.viewport.renderPath(
             self.coordinates(), mouse, self.index);
+          self.tempConnector.attr('class', 'task-node-port-connector');
           self.tempInputPort = response.inputPort;
         }
       })
