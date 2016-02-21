@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <div class="container" style="margin-top: 60px;">
+    <div class="col-md-8">
+      <h2>Koding Hackathon <small>Bang Hack Creation</small></h2>
+      <hr/>
+      <h4>Intro</h4>
+      <p>
+        Irrespective of all the creative work we do everyday, there are few things
+        we need to do over and over again! It's boring, yet, necessary. It feels
+        so worthless to be spending time on those. What are computers for? It's
+        designed for the exact same purpose, here we are putting it into use.
+      </p>
+      <p>&nbsp;</p>
+
+      <h4>The solution</h4>
+      <p>
+        This is a workflow engine, which is quite generic in nature. Create the 
+        set of tasks you need to be doing repeatedly, hit run/re-run. Keep it 
+        going. It will work for you in the background and let you know of the 
+        results.
+      </p>
+      <p>
+        Currently, we have defined few types of tasks for simplicity. However,
+        the framework is generic enough to accomodate endless possibilities.
+      </p>
+      <p>&nbsp;</p>
+
+      <h4>Quick Tutorial</h4>
+      <p>
+        Workflow is a set of tasks that have some dependency. Task is the 
+        smallest unit of work in our system. It involves a set of inputs and
+        outputs. Also, dependency between tasks must be specified so that it
+        can determine the order of performing them. In case of cyclic 
+        dependencies, or failures, tasks are skipped automatically.
+      </p>
+      <p>Task can get input in three ways.</p>
+      <ul>
+        <li>By direct value assignment.</li>
+        <li>From previous task output.</li>
+        <li>From properties specified that run.</li>
+      </ul>
+      <p>
+        Selection of each task will reveal the inputs and outputs defined for
+        that task, and also the way it gets the input. For simplicity,
+        dependencies must be specified manually for each task. 'Dependencies' is
+        the list of tasks that needs to be complete before the selected task can
+        execute.
+      </p>
+      <p>&nbsp;</p>
+
+      <h4>Examples</h4>
+      <p>
+        Move over to Workflow tab to see the list of examples that have been
+        created for demo purpose. Each workflow can be edited, run or re-run.
+      </p>
+      <p>
+        Monitor tab provides the history of the workflow runs. Also, it can be
+        re-run using the same properties specification. Monitor also provides
+        details of task inputs, outputs and statuses.
+      </p>
+    </div>
+  </div>
+{% endblock content %}
