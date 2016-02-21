@@ -120,6 +120,7 @@
                 </div>
                 <div class="properties-input">
                   <select class="form-control input-sm" name="inputs-src-${index}">
+                    <option value="" {{if value.src == ''}}selected{{/if}}>Select Source</option>
                     <option value="taskout" {{if value.src == 'taskout'}}selected{{/if}}>Taskout</option>
                     <option value="properties" {{if value.src == 'properties'}}selected{{/if}}>Properties</option>
                     <option value="value" {{if value.src == 'value'}}selected{{/if}}>Value</option>
