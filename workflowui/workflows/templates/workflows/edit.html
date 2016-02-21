@@ -81,7 +81,7 @@
   <script type="text/template" id="tmpl-task-properties">
     {% verbatim %}
       <div>
-        <form class="properties-form">
+        <div class="properties-form">
           <div class="properties-form__heading">
             ${task.name}
           </div>
@@ -191,7 +191,10 @@
               No dependencies defined
             </div>
           {{/if}}
-        </form>
+          <div class="text-right">
+            <a href="#" data-name="${task.name}" class="btn btn-danger btn-sm delete-task-node">Delete Task</a>
+          </div>
+        </div>
       </div>
     {% endverbatim %}
   </script>

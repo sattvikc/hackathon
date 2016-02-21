@@ -297,7 +297,7 @@ function TaskNode(viewport, svg, task) {
   }
 
   self.initPropertiesChangeHandler = function() {
-    self.$propertiesForm = self.viewport.$propertiesContainer.find('form');
+    self.$propertiesForm = self.viewport.$propertiesContainer.find('.properties-form');
     self.viewport.showWorkflowProperties();
 
     self.$propertiesForm.find(':input').on('change', function() {
@@ -356,6 +356,11 @@ function TaskNode(viewport, svg, task) {
       self.viewport.renderConnectors();
       return false;
     });
+
+    self.$propertiesForm.find('.delete-task-node').on('click', function() {
+      var name = $(this).data('name');
+      self.viewport.deleteTaskNode(name);
+    });
   }
 
   self.renderProperties = function() {
@@ -408,6 +413,25 @@ function WorkflowViewPort(identifier, areaIdentifier, workflow) {
   self.addTaskItem = function(task) {
     var taskNode = new TaskNode(self, self.svg, task);
     self.taskNodes.push(taskNode);
+  }
+
+  self.deleteTaskNode = function(name) {
+    var taskNode = self.getTaskNodeByName(name);
+    if(!taskNode) {
+      return;
+    }
+    var index = self.workflow.tasks.indexOf(taskNode.task);
+    if(index >= 0) {
+      self.workflow.tasks.splice(index, 1);
+    }
+    index = self.taskNodes.indexOf(taskNode);
+    if(index >= 0) {
+      self.taskNodes.splice(index, 1);
+    }
+    taskNode.taskNode.remove();
+    self.deselectAllTaskNodes();
+    self.hideWorkflowProperties();
+    self.renderConnectors();
   }
 
   self.addTasks = function(tasks) {
@@ -595,10 +619,6 @@ function WorkflowViewPort(identifier, areaIdentifier, workflow) {
       self.hideWorkflowProperties();
     });
 
-    self.$propertiesContainer.on('click', function(event) {
-      event.stopPropagation();
-    });
-
     $(document).on('click', '.add-task-button', function(event) {
       event.stopPropagation();
       $('#modal-new-task').modal('show');
@@ -636,6 +656,10 @@ function WorkflowViewPort(identifier, areaIdentifier, workflow) {
       $form.find('input[name=description]').val('');
       $form.find('input[name=workflow]').val(JSON.stringify(self.workflow));
       $form.submit();
+    });
+
+    self.$propertiesContainer.on('click', function(event) {
+      event.stopPropagation();
     });
   }
 
