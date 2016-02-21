@@ -52,7 +52,8 @@ class TaskInstance(object):
         try:
             self.state = 'RUNNING'
             self.task.run()
-            self.outputs.update(self.task.outputs)
+            for k in self.outputs:
+                self.outputs[k] = self.task.outputs[k]
             self.state = 'SUCCESSFUL'
         except Exception as e:
             self.exception = str(e)

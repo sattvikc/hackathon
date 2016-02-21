@@ -37,6 +37,7 @@
             <tr>
               <td><input type="text" name="key" class="form-control" value="{{ prop.0 }}"></input></td>
               <td><textarea name="value" class="form-control">{{ prop.1|safe }}</textarea></td>
+              <td><a href="#" class="btn btn-sm btn-danger" onclick="$(this).parent().parent().remove();">remove</a></td>
             </tr>
           {% endfor %}
         </tbody>
@@ -53,7 +54,7 @@
   var add_row = function() {
     var row = $('<tr>' +
                 '<td><input type="text" name="key" class="form-control"></input></td>' +
-                '<td><input type="text" name="value" class="form-control"></input></td>' +
+                '<td><textarea name="value" class="form-control"></textarea></td>' +
                 '<td><a href="#" class="btn btn-sm btn-danger" onclick="$(this).parent().parent().remove();">remove</a></td>' +
               '</tr>');
     $('#key-value-list').append(row);
