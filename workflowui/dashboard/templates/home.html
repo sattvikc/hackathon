@@ -203,6 +203,34 @@
               No outputs defined
             </div>
           {{/if}}
+          <div class="properties-form__subheading">
+            Dependencies
+            <span class="pull-right">
+              <a class="add-property add-dependency-properties" href="#">
+                <i class="ti-plus"></i>
+              </a>
+            </span>
+          </div>
+          {{each(index, value) task.dependencies}}
+            <div class="properties-group">
+              <a class="delete-properties-group" href="#" data-type="dependencies" data-index="${index}">
+                <i class="ti-close"></i>
+              </a>
+              <div class="properties-form__field">
+                <div class="properties-label">
+                  <label>Task</label>
+                </div>
+                <div class="properties-input">
+                  <input name="dependencies-${index}" class="form-control input-sm" type="text" value="${value}" />
+                </div>
+              </div>
+            </div>
+          {{/each}}
+          {{if task.dependencies.length == 0}}
+            <div class="properties-group">
+              No dependencies defined
+            </div>
+          {{/if}}
         </form>
       </div>
     {% endverbatim %}

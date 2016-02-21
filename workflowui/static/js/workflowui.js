@@ -311,6 +311,10 @@ function TaskNode(viewport, svg, task) {
         var index = parseInt(name.split('-')[1], 10);
         self.task.outputs[index] = $(this).val();
       }
+      if(name.indexOf('dependencies') >= 0) {
+        var index = parseInt(name.split('-')[1], 10);
+        self.task.dependencies[index] = $(this).val();
+      }
       self.render();
       self.viewport.renderConnectors();
     });
@@ -329,6 +333,13 @@ function TaskNode(viewport, svg, task) {
       return false;
     });
 
+    self.$propertiesForm.find('.add-dependency-properties').on('click', function() {
+      self.task.dependencies.push('');
+      self.render();
+      self.viewport.renderConnectors();
+      return false;
+    });
+
     self.$propertiesForm.find('.delete-properties-group').on('click', function() {
       var type = $(this).data('type')
       var index = parseInt($(this).data('index'), 10);
@@ -337,6 +348,9 @@ function TaskNode(viewport, svg, task) {
       }
       if(type == 'outputs') {
         self.task.outputs.splice(index, 1);
+      }
+      if(type == 'dependencies') {
+        self.task.dependencies.splice(index, 1);
       }
       self.render();
       self.viewport.renderConnectors();
