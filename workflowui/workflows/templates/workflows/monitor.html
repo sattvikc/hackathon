@@ -67,6 +67,12 @@
                 {% endif %}
               </td>
             </tr>
+            {% if tdata.state == 'FAILURE' %}
+            <tr>
+              <th>Exception</th>
+              <td><code>{{ tdata.exception }}</code></td>
+            </tr>
+            {% endif %}
           </tbody>
         </table>
       </div>

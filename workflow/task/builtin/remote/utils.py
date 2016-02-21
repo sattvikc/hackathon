@@ -5,6 +5,7 @@ def create_ssh_client(properties):
     client = paramiko.SSHClient()
     host = properties.get('host')
     port = properties.get('port', 22)
+    port = int(port)
     username = properties.get('username')
     password = properties.get('password')
     treat_as_known = properties.get('treatAsKnown', True)

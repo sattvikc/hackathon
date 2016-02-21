@@ -78,6 +78,7 @@ class InlineRunner(RunnerBase):
                     else:
                         self.logger.info('Task [%s] execution failed.' % task.name)
                         self.monitor.update('tasks.' + task.name + '.state', 'FAILURE')
+                        self.monitor.update('tasks.' + task.name + '.exception', task.exception)
 
             if len(ready_queue) == 0:
                 # Deadlock or no more executable tasks

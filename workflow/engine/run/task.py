@@ -6,6 +6,7 @@ class TaskInstance(object):
         self.name = None
         self.task = None
         self.dependencies = []
+        self.exception = None
         self.inputs = {}
         self.outputs = {}
         self.state = 'CREATED'
@@ -53,7 +54,8 @@ class TaskInstance(object):
             self.task.run()
             self.outputs.update(self.task.outputs)
             self.state = 'SUCCESSFUL'
-        except:
+        except Exception as e:
+            self.exception = str(e)
             self.state = 'FAILURE'
 
     def is_ready(self):
