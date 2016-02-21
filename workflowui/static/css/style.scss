@@ -1,7 +1,7 @@
 @import 'mixins.scss';
 @import 'workflowui.scss';
 
-$properties-width: 250px;
+$properties-width: 350px;
 $error-color: #E74C3C;
 $success-color: #18BC9C;
 
@@ -71,6 +71,17 @@ body {
     color: #FFF;
     text-decoration: none;
   }
+}
+
+.save-workflow-button {
+  display: inline-block;
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  opacity: 0.8;
+  &:hover, &:active, &:focus {
+    opacity: 1;
+  } 
 }
 
 .properties-form {

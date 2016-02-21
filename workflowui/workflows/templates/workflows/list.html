@@ -12,7 +12,7 @@
             {{ wf.description|default:"No description available." }}
           </samp>
           <hr/>
-          <a href="" class="btn btn-sm btn-warning">Edit</a>
+          <a href="{% url 'workflow:edit' pk=wf.pk %}" class="btn btn-sm btn-warning">Edit</a>
           <a href="{% url 'workflow:execute' pk=wf.pk %}" class="btn btn-sm btn-primary">Run</a>
         </div>
       </div>

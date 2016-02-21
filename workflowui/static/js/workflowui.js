@@ -622,6 +622,14 @@ function WorkflowViewPort(identifier, areaIdentifier, workflow) {
       });
       return false;
     });
+
+    $(document).on('click', '.save-workflow-button', function() {
+      var $form = $('#workflow-form');
+      $form.find('input[name=name]').val(self.workflow.name);
+      $form.find('input[name=description]').val('');
+      $form.find('input[name=workflow]').val(JSON.stringify(self.workflow));
+      $form.submit();
+    });
   }
 
   self.init();

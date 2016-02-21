@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'dashboard',
     'workflows',
+    'jsonify',
 ]
 
 MIDDLEWARE_CLASSES = [

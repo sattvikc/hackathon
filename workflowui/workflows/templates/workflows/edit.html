@@ -1,0 +1,193 @@
+{% extends "base.html" %}
+{% load jsonify %}
+
+{% block extra-head %}
+  <script type="text/javascript">
+    var workflow = {{ workflow.definition|jsonify }};
+    var viewport = new WorkflowViewPort('#workflow-window', '#workflow-area', workflow);
+  </script>
+{% endblock extra-head %}
+
+{% block content %}
+  <div id="workflow-window" class="workflow-window">
+    <div class="workflow-area" id="workflow-area">
+      <a class="add-task-button" href="#">
+        <i class="ti-plus"></i>
+      </a>
+      <a href="#" class="save-workflow-button btn btn-success">
+        Save Workflow
+      </a>
+    </div>
+    <div class="workflow-properties" id="workflow-properties"></div>
+  </div>
+  <form id="workflow-form" action="{% url 'workflow:save' pk=workflow.pk %}" method="post">
+    {% csrf_token %}
+    <input name="name" type="hidden" />
+    <input name="description" type="hidden" />
+    <input name="workflow" type="hidden" />
+  </form>
+  <div id="modal-new-task" class="modal fade bs-example-modal-sm">
+    <div class="modal-dialog">
+      <form class="properties-form properties-form--large add-new-task">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h4 class="modal-title">Add new task</h4>
+          </div>
+          <div class="modal-body">
+            <div class="properties-form__field">
+              <div class="properties-label">
+                <label>Name</label>
+              </div>
+              <div class="properties-input">
+                <input name="name" class="form-control input-sm" type="text" />
+              </div>
+            </div>
+            <div class="properties-form__field">
+              <div class="properties-label">
+                <label>Def</label>
+              </div>
+              <div class="properties-input">
+                <input name="def" class="form-control input-sm" type="text" />
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <input type="submit" class="btn btn-success" value="Create Task" />
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+  <script type="text/template" id="tmpl-task-node">
+    {% verbatim %}
+      <div>
+        <div class="task-node {{if task.ui.selected}}task-node--selected{{/if}}">
+          <div class="task-node__name">
+            ${task.name}
+          </div>
+          <div class="task-node__def">
+            ${task.def}
+          </div>
+        </div>
+      </div>
+    {% endverbatim %}
+  </script>
+  <script type="text/template" id="tmpl-task-properties">
+    {% verbatim %}
+      <div>
+        <form class="properties-form">
+          <div class="properties-form__heading">
+            ${task.name}
+          </div>
+
+          <div class="properties-form__subheading">
+            Inputs
+            <span class="pull-right">
+              <a class="add-property add-input-properties" href="#">
+                <i class="ti-plus"></i>
+              </a>
+            </span>
+          </div>
+          {{each(index, value) task.inputs}}
+            <div class="properties-group">
+              <a class="delete-properties-group" href="#" data-type="inputs" data-index="${index}">
+                <i class="ti-close"></i>
+              </a>
+              <div class="properties-form__field">
+                <div class="properties-label">
+                  <label>Name</label>
+                </div>
+                <div class="properties-input">
+                  <input name="inputs-name-${index}" class="form-control input-sm" type="text" value="${value.name}" />
+                </div>
+              </div>
+              <div class="properties-form__field">
+                <div class="properties-label">
+                  <label>Source</label>
+                </div>
+                <div class="properties-input">
+                  <select class="form-control input-sm" name="inputs-src-${index}">
+                    <option value="" {{if value.src == ''}}selected{{/if}}>Select Source</option>
+                    <option value="taskout" {{if value.src == 'taskout'}}selected{{/if}}>Taskout</option>
+                    <option value="properties" {{if value.src == 'properties'}}selected{{/if}}>Properties</option>
+                    <option value="value" {{if value.src == 'value'}}selected{{/if}}>Value</option>
+                  </select>
+                </div>
+              </div>
+              <div class="properties-form__field">
+                <div class="properties-label">
+                  <label>Key</label>
+                </div>
+                <div class="properties-input">
+                  <input name="inputs-key-${index}" class="form-control input-sm" type="text" value="${value.key}" />
+                </div>
+              </div>
+            </div>
+          {{/each}}
+          {{if task.inputs.length == 0}}
+            <div class="properties-group">
+              No inputs defined
+            </div>
+          {{/if}}
+          <div class="properties-form__subheading">
+            Outputs
+            <span class="pull-right">
+              <a class="add-property add-output-properties" href="#">
+                <i class="ti-plus"></i>
+              </a>
+            </span>
+          </div>
+          {{each(index, value) task.outputs}}
+            <div class="properties-group">
+              <a class="delete-properties-group" href="#" data-type="outputs" data-index="${index}">
+                <i class="ti-close"></i>
+              </a>
+              <div class="properties-form__field">
+                <div class="properties-label">
+                  <label>Name</label>
+                </div>
+                <div class="properties-input">
+                  <input name="outputs-${index}" class="form-control input-sm" type="text" value="${value}" />
+                </div>
+              </div>
+            </div>
+          {{/each}}
+          {{if task.outputs.length == 0}}
+            <div class="properties-group">
+              No outputs defined
+            </div>
+          {{/if}}
+          <div class="properties-form__subheading">
+            Dependencies
+            <span class="pull-right">
+              <a class="add-property add-dependency-properties" href="#">
+                <i class="ti-plus"></i>
+              </a>
+            </span>
+          </div>
+          {{each(index, value) task.dependencies}}
+            <div class="properties-group">
+              <a class="delete-properties-group" href="#" data-type="dependencies" data-index="${index}">
+                <i class="ti-close"></i>
+              </a>
+              <div class="properties-form__field">
+                <div class="properties-label">
+                  <label>Task</label>
+                </div>
+                <div class="properties-input">
+                  <input name="dependencies-${index}" class="form-control input-sm" type="text" value="${value}" />
+                </div>
+              </div>
+            </div>
+          {{/each}}
+          {{if task.dependencies.length == 0}}
+            <div class="properties-group">
+              No dependencies defined
+            </div>
+          {{/if}}
+        </form>
+      </div>
+    {% endverbatim %}
+  </script>
+{% endblock content %}

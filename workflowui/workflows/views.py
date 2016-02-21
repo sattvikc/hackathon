@@ -4,7 +4,7 @@ from django.http import HttpResponse
 from workflow.client import WorkflowClient
 
 from .models import Workflow, WorkflowRun
-
+import json
 
 ENDPOINT = 'http://localhost:12120/api/1.0'
 CLIENT = WorkflowClient(ENDPOINT)
@@ -26,6 +26,13 @@ def new(request):
     # TODO: Redirect to edit
 
 
+def edit(request, pk):
+    wf = Workflow.objects.get(pk=pk)
+    return render(request, 'workflows/edit.html', {
+            'workflow': wf,
+        })
+
+
 def save(request, pk):
     name = request.POST.get('name')
     desc = request.POST.get('description', '')
@@ -33,8 +40,9 @@ def save(request, pk):
     wf = Workflow.objects.get(pk=pk)
     wf.name = name
     wf.description = desc
-    wf.definition = defn
+    wf.definition = json.loads(defn)
     wf.save()
+    return redirect('workflow:edit', pk=wf.pk)
 
 
 def execute(request, pk):
