@@ -33,6 +33,12 @@
             <th>Value</th>
             <th></th>
           </tr>
+          {% for prop in properties %}
+            <tr>
+              <td><input type="text" name="key" class="form-control" value="{{ prop.0 }}"></input></td>
+              <td><textarea name="value" class="form-control">{{ prop.1|safe }}</textarea></td>
+            </tr>
+          {% endfor %}
         </tbody>
       </table>
       <a href="#" class="btn btn-sm btn-success" onclick="add_row();">Add</a>

@@ -54,9 +54,19 @@ def save(request, pk):
 
 
 def execute(request, pk):
+    keys = []
+    values = []
+    wfrpk = request.GET.get('rerunfrom', None)
+    if not wfrpk is None:
+        wfr = WorkflowRun.objects.get(pk=wfrpk)
+        props = wfr.properties
+        for k, v in props.items():
+            keys.append(k)
+            values.append(v)
     wf = Workflow.objects.get(pk=pk)
     return render(request, 'workflows/execute.html', {
             'workflow': wf,
+            'properties': zip(keys, values),
         })
 
 

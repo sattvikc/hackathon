@@ -3,7 +3,7 @@
 
 {% block content %}
   <div class="container" style="margin-top: 80px;">
-    <h3>Workflow monitor <small><a href="{{ request.get_full_path}}" class="btn btn-xs btn-primary">refresh</a></small></h3>
+    <h3>Workflow monitor</h3>
     <hr/>
     <div class="col-md-6">
       <table class="table table-bordered">
@@ -39,6 +39,13 @@
     </div>
 
     <div style="clear: both;"></div>
+
+    <div class="col-md-12">
+      <a href="{{ request.get_full_path}}" class="btn btn-sm btn-default">refresh</a>
+      <a href="{% url 'workflow:execute' pk=workflow.pk %}?rerunfrom={{ workflow_run.pk }}" class="btn btn-sm btn-primary">re-run</a>
+    </div>
+
+    <div style="clear: both; padding: 10px;"></div>
 
     <h4>Tasks</h4>
     <hr/>
