@@ -1,9 +1,6 @@
 @import 'mixins.scss';
+@import 'variables.scss';
 @import 'workflowui.scss';
-
-$properties-width: 350px;
-$error-color: #E74C3C;
-$success-color: #18BC9C;
 
 body {
   position: relative;
