@@ -18,14 +18,12 @@ def wlist(request):
 
 
 def new(request):
-    name = request.POST.get('name')
-    desc = request.POST.get('description', '')
-    defn = request.POST.get('workflow')
     wf = Workflow()
-    wf.name = name
-    wf.description = desc
-    wf.definition = defn
+    wf.name = 'Untitled'
+    wf.description = ''
+    wf.definition = {'name': 'Untitled', 'tasks': []}
     wf.save()
+    # TODO: Redirect to edit
 
 
 def save(request, pk):
@@ -59,7 +57,6 @@ def submit(request, pk):
             inp.pop('name')
 
     wf_def = { 'workflow': wf_def }
-
     # Pre process complete
 
     properties = {}
