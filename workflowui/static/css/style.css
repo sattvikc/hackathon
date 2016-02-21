@@ -41,6 +41,9 @@
   .task-node__outputport:hover {
     cursor: pointer; }
 
+.task-node__dependencyport {
+  fill: #3498DB; }
+
 .task-node-port-connector {
   fill: none;
   stroke: #e67e22;

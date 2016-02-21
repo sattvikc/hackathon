@@ -305,6 +305,26 @@ function TaskNode(viewport, svg, task) {
     }
   }
 
+  self.getDependencyTooltipText = function() {
+    if(self.task.dependencies.length == 0) {
+      return 'This task is not dependent on any other task';
+    }
+    var tasks = self.task.dependencies.join(', ');
+    return 'This task is dependent on: ' + tasks;
+  }
+
+  self.renderDependencyPort = function() {
+    self.dependencyPort = self.taskNode.append('circle')
+      .attr('class', 'task-node__dependencyport')
+      .attr('cx', -self.task.ui.port_radius/2)
+      .attr('cy', self.task.ui.height/2)
+      .attr('r', self.task.ui.port_radius)
+      .attr('data-toggle', 'tooltip')
+      .attr('data-title', self.getDependencyTooltipText())
+      .attr('data-container', 'body')
+      .attr('data-placement', 'top');
+  }
+
   self.initPropertiesChangeHandler = function() {
     self.$propertiesForm = self.viewport.$propertiesContainer.find('.properties-form');
     self.viewport.showWorkflowProperties();
@@ -373,7 +393,10 @@ function TaskNode(viewport, svg, task) {
   }
 
   self.renderProperties = function() {
-    var content = $('#tmpl-task-properties').tmpl({'task': self.task}).html();
+    var content = $('#tmpl-task-properties').tmpl({
+      'task': self.task,
+      'taskNames': self.viewport.getAllTaskNames()
+    }).html();
     self.viewport.$propertiesContainer.html(content);
     self.initPropertiesChangeHandler();
   }
@@ -383,6 +406,7 @@ function TaskNode(viewport, svg, task) {
     self.renderTaskNode();
     self.renderInputPorts();
     self.renderOutputPorts();
+    self.renderDependencyPort();
     if(self.isSelected()) {
       self.renderProperties();
     }
@@ -450,6 +474,14 @@ function WorkflowViewPort(identifier, areaIdentifier, workflow) {
     for(var i=0; i<tasks.length; i++) {
       self.addTaskItem(tasks[i]);
     }
+  }
+
+  self.getAllTaskNames = function() {
+    var names = [];
+    for(var i=0; i<self.taskNodes.length; i++) {
+      names.push(self.taskNodes[i].task.name);
+    }
+    return names;
   }
 
   self.getTaskNodeByName = function(name) {

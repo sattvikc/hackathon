@@ -46,6 +46,10 @@
   }
 }
 
+.task-node__dependencyport {
+  fill: $dependency-port-color;
+}
+
 .task-node-port-connector {
   fill: none;
   stroke: $connector-color;
