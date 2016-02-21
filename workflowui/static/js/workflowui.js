@@ -190,6 +190,20 @@ function TaskNode(viewport, svg, task) {
     self.render();
   }
 
+  self.startDependencyPort = function() {
+    return {
+      'x': self.task.ui.x,
+      'y': self.task.ui.y + self.task.ui.height/2
+    }
+  }
+
+  self.endDependencyPort = function() {
+    return {
+      'x': self.task.ui.x + self.task.ui.width,
+      'y': self.task.ui.y + self.task.ui.height/2
+    }
+  }
+
   self.handleDragDrop = function() {
     var drag = d3.behavior.drag()
       .origin(function() { 
@@ -358,6 +372,8 @@ function WorkflowViewPort(identifier, areaIdentifier, workflow) {
   self.connectorPaths = [];
   self.$workflowWindow = $(identifier);
   self.$propertiesContainer = $(identifier).find('.workflow-properties');
+  self.dependencyConnectors = [];
+  self.dependencyConnectorPaths = [];
 
   self.deselectAllTaskNodes = function() {
     for(var i=0; i<self.taskNodes.length; i++) {
@@ -434,7 +450,7 @@ function WorkflowViewPort(identifier, areaIdentifier, workflow) {
   }
 
   self.renderPath = function(p1, p2, index) {
-    var offset = (index*10) + 15;
+    var offset = (index*10) + 20;
     var lineFunction = d3.svg.line()
       .x(function(d) { return d.x; })
       .y(function(d) { return d.y; })
@@ -448,17 +464,17 @@ function WorkflowViewPort(identifier, areaIdentifier, workflow) {
     lineData.push(p2);
 
     var path = self.svg.append('path')
-      .attr('d', lineFunction(lineData))
-      .attr('class', 'task-node-connector');
+      .attr('d', lineFunction(lineData));
     return path;
   }
 
   self.renderConnector = function(p1, p2, index) {
     var path = self.renderPath(p1, p2, index);
+    path.attr('class', 'task-node-port-connector');
     self.connectorPaths.push(path);
   }
 
-  self.renderConnectors = function() {
+  self.renderPortConnectors = function() {
     for(var i=0; i<self.connectorPaths.length; i++) {
       self.connectorPaths[i].remove();
     }
@@ -475,6 +491,38 @@ function WorkflowViewPort(identifier, areaIdentifier, workflow) {
       };
       self.renderConnector(p1, p2, connector.outputPort.index);
     }
+  }
+
+  self.renderDependencyConnectors = function() {
+    for(var i=0; i<self.dependencyConnectorPaths.length; i++) {
+      self.dependencyConnectorPaths[i].remove();
+    }
+    self.dependencyConnectors = [];
+    self.dependencyConnectorPaths = [];
+    for(var i=0; i<self.taskNodes.length; i++) {
+      var taskNode = self.taskNodes[i];
+      for(var j=0; j<taskNode.task.dependencies.length; j++) {
+        var name = taskNode.task.dependencies[j];
+        var startTaskNode = self.getTaskNodeByName(name);
+        if(!startTaskNode) {
+          continue;
+        }
+        self.dependencyConnectors.push({'from': startTaskNode, 'to': taskNode});
+      }
+    }
+
+    for(var i=0; i<self.dependencyConnectors.length; i++) {
+      var from = self.dependencyConnectors[i].from;
+      var to = self.dependencyConnectors[i].to;
+      var path = self.renderPath(from.endDependencyPort(), to.startDependencyPort(), -2);
+      path.attr('class', 'task-node-dependency-connector');
+      self.dependencyConnectorPaths.push(path);
+    }
+  }
+
+  self.renderConnectors = function() {
+    self.renderPortConnectors();
+    self.renderDependencyConnectors();
   }
 
   self.distanceBetweenPoints = function(p1, p2) {

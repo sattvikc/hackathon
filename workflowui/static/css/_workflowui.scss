@@ -2,6 +2,7 @@ $selected-color: #3498DB;
 $input-port-color: #40D47E;
 $output-port-color: #E74C3C;
 $connector-color: #e67e22;
+$dependency-connector-color: #2C3E50;
 
 .task-node {
   width: 250px;
@@ -51,8 +52,14 @@ $connector-color: #e67e22;
   }
 }
 
-.task-node-connector {
+.task-node-port-connector {
   fill: none;
   stroke: $connector-color;
   stroke-width: 1px;
+}
+
+.task-node-dependency-connector {
+  fill: none;
+  stroke: $dependency-connector-color;
+  stroke-width: 2px;
 }

@@ -41,10 +41,15 @@
   .task-node__outputport:hover {
     cursor: pointer; }
 
-.task-node-connector {
+.task-node-port-connector {
   fill: none;
   stroke: #e67e22;
   stroke-width: 1px; }
+
+.task-node-dependency-connector {
+  fill: none;
+  stroke: #2C3E50;
+  stroke-width: 2px; }
 
 body {
   position: relative;
